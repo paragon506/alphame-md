@@ -47,8 +47,6 @@ export function initOptions() {
     const savedFloor = localStorage.getItem('alphame-min-floor') || '128';
     settingMinFloor.value = savedFloor;
     const updateFloorLabels = (val) => {
-      const noteLabel = $('#floorNoteLabel');
-      if (noteLabel) noteLabel.textContent = `${val} kbps`;
       const autoHint = $('#autoHint');
       if (autoHint) {
         autoHint.textContent = `Picks the best quality per file. Never drops below ${val} kbps floor.`;

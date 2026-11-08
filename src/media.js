@@ -162,11 +162,11 @@ export async function encode(job, src, info) {
         '-id3v2_version',
         '3',
       );
-    } else if (o.format === 'm4a')
+    } else if (o.format === 'm4a') {
       a.push('-c:a', 'aac', '-b:a', br + 'k', '-movflags', '+faststart');
-    else if (o.format === 'opus')
+    } else if (o.format === 'opus') {
       a.push('-c:a', 'libopus', '-b:a', Math.min(br, 256) + 'k', '-vbr', o.vbr ? 'on' : 'off');
-    else
+    } else if (o.format === 'ogg') {
       a.push(
         '-c:a',
         'libvorbis',
@@ -185,12 +185,26 @@ export async function encode(job, src, info) {
             ]
           : ['-b:a', br + 'k']),
       );
-    if (o.sampleRate) a.push('-ar', String(o.sampleRate));
+    } else if (o.format === 'flac') {
+      a.push('-c:a', 'flac', '-compression_level', '12');
+    } else if (o.format === 'alac') {
+      a.push('-c:a', 'alac', '-movflags', '+faststart');
+    } else if (o.format === 'wav') {
+      a.push('-c:a', 'pcm_s16le');
+    } else if (o.format === 'aiff') {
+      a.push('-c:a', 'pcm_s16be');
+    }
+
+    if (o.sampleRate) {
+      a.push('-ar', String(o.sampleRate));
+    } else if (LOSSY.has(o.format) && info.sr > 48000) {
+      a.push('-ar', '48000');
+    }
     if (o.channels) a.push('-ac', String(o.channels));
     a.push('-progress', 'pipe:1', '-nostats', out);
     return a;
   };
-  const coverOk = info.cover && ['mp3', 'm4a'].includes(o.format);
+  const coverOk = info.cover && ['mp3', 'm4a', 'flac', 'alac'].includes(o.format);
   try {
     await runFfmpeg(job, build(coverOk), info.dur);
   } catch (e) {

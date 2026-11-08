@@ -21,6 +21,7 @@ export const AUDIO_EXT = new Set([
   '.aac',
   '.wav',
   '.flac',
+  '.alac',
   '.ogg',
   '.oga',
   '.opus',
@@ -36,6 +37,10 @@ export const FORMATS = {
   m4a: { ext: 'm4a', mime: 'audio/mp4' },
   opus: { ext: 'opus', mime: 'audio/ogg' },
   ogg: { ext: 'ogg', mime: 'audio/ogg' },
+  flac: { ext: 'flac', mime: 'audio/flac' },
+  alac: { ext: 'm4a', mime: 'audio/mp4' },
+  wav: { ext: 'wav', mime: 'audio/wav' },
+  aiff: { ext: 'aiff', mime: 'audio/aiff' },
 };
 export const PROFILES = {
   auto: { format: 'mp3', bitrate: 192, vbr: false, auto: true },

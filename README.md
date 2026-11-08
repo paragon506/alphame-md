@@ -15,9 +15,10 @@
 - **Search YouTube Music** for studio tracks — no video intros, visualizers, or skits
 - **Import Spotify playlists** (public) — resolves each track to an official YouTube Music release
 - **Import YouTube playlists and links** via yt-dlp
-- **Upload local audio files** (MP3, FLAC, WAV, M4A, OGG, Opus…) and re-encode them
-- **Compression profiles**: Auto, Best (320k VBR), Balanced (192k), Compact (128k), Custom
-- **Configurable minimum bitrate floor** (64, 96, 128, 160 kbps) — prevents low-bitrate sources (like 48 kbps AAC) from needlessly inflating into oversized MP3 files
+- **Upload local audio files** (MP3, FLAC, ALAC, WAV PCM, AIFF, M4A, OGG, Opus…) and re-encode them
+- **Wide format support**: MP3, AAC/M4A, Opus, OGG Vorbis, FLAC (lossless level 12), ALAC (Apple Lossless), WAV PCM, and AIFF PCM
+- **Compression profiles**: Auto, Best (320k VBR), Balanced (192k), Compact (128k), Custom (with lossless options)
+- **Configurable minimum bitrate floor** (64, 96, 128, 160 kbps) — prevents low-bitrate streams (like 48 kbps AAC) from needlessly inflating into oversized files
 - **Recompress** any finished job with different settings
 - **Tag editor** — edit title, artist, album, year, genre without re-encoding
 - **Download individually** or as a **ZIP**
