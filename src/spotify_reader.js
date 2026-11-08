@@ -6,7 +6,6 @@ import { PYTHON, MAX_PLAYLIST, SPOTIFY_DELAY_MS } from './config.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SCRIPT_PATH = path.join(__dirname, 'spotify_reader.py');
 
-// In-memory cache to prevent redundant requests and protect against IP rate limits
 const cache = new Map();
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
@@ -40,7 +39,6 @@ export function fetchSpotifyPlaylist(url, options = {}) {
       );
     }
 
-    // Check cache first
     const cached = cache.get(playlistId);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
       return resolve(cached.data);
@@ -70,7 +68,6 @@ export function fetchSpotifyPlaylist(url, options = {}) {
             data = JSON.parse(text);
           }
         } catch (parseErr) {
-          // Fall through to error handler
         }
 
         if (data && data.success === false) {
@@ -91,7 +88,6 @@ export function fetchSpotifyPlaylist(url, options = {}) {
           return reject(new Error('Invalid or unreadable response from Spotify reader'));
         }
 
-        // Store in cache
         cache.set(playlistId, {
           timestamp: Date.now(),
           data,

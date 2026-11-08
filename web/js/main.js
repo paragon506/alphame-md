@@ -66,7 +66,6 @@ async function handleImport() {
   const button = $('#importBtn');
   button.disabled = true;
 
-  // Single playlist link: load playlist view
   if (isPlaylistLink(text)) {
     const isSp = isSpotifyUrl(text);
     setMessage(isSp ? 'Reading Spotify playlist…' : 'Reading YouTube playlist…');

@@ -1,4 +1,23 @@
-node_modules
-public
+# dependencies
+node_modules/
+
+# build output
+public/
+
+# environment
 .env
+
+# runtime artifacts
 *.zip
+cookies.txt
+.alphame_jobs_store.json
+
+# editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# os
+.DS_Store
+Thumbs.db

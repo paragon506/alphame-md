@@ -1,12 +1,5 @@
-/**
- * YouTube Music Matcher
- * Resolves Spotify track metadata (title, artist, duration) to official YouTube Music
- * studio audio releases (ATV - Audio Track Video), completely avoiding music videos,
- * visualizers, lyric videos, and skits.
- */
-
 const YTM_SEARCH_URL = 'https://music.youtube.com/youtubei/v1/search';
-const YTM_SONGS_PARAM = 'EgWKAQIIAWoQEAMQBBAJEAoQBRAREBAQFQ%3D%3D'; // Filter: "Songs"
+const YTM_SONGS_PARAM = 'EgWKAQIIAWoQEAMQBBAJEAoQBRAREBAQFQ%3D%3D';
 
 function parseDurationText(durStr) {
   if (!durStr || typeof durStr !== 'string') return 0;
@@ -16,13 +9,6 @@ function parseDurationText(durStr) {
   return 0;
 }
 
-/**
- * Searches YouTube Music specifically for official song releases
- * @param {string} title - Track title
- * @param {string} artist - Track artist(s)
- * @param {number} [targetDurationSec] - Spotify track duration in seconds
- * @returns {Promise<string|null>} YouTube watch URL or null if not found
- */
 export async function resolveOfficialTrack(title, artist, targetDurationSec = 0) {
   const query = `${artist || ''} ${title || ''}`.trim();
   if (!query) return null;
@@ -76,7 +62,6 @@ export async function resolveOfficialTrack(title, artist, targetDurationSec = 0)
           ?.navigationEndpoint?.watchEndpoint?.videoId;
       if (!videoId) continue;
 
-      // Extract duration from flex columns if available
       let candidateDur = 0;
       const col2Runs =
         r.flexColumns?.[1]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs || [];
@@ -87,7 +72,6 @@ export async function resolveOfficialTrack(title, artist, targetDurationSec = 0)
         }
       }
 
-      // Check if item is flagged as Audio Track Video (official release)
       const musicVideoType =
         r.flexColumns?.[0]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs?.[0]
           ?.navigationEndpoint?.watchEndpoint?.watchEndpointMusicSupportedConfigs
@@ -96,7 +80,6 @@ export async function resolveOfficialTrack(title, artist, targetDurationSec = 0)
 
       if (targetDurationSec > 0 && candidateDur > 0) {
         const diff = Math.abs(candidateDur - targetDurationSec);
-        // Prefer official ATV releases when duration diff is close
         const score = diff - (isOfficialAudio ? 3 : 0);
         if (score < minDurDiff) {
           minDurDiff = score;
@@ -114,12 +97,6 @@ export async function resolveOfficialTrack(title, artist, targetDurationSec = 0)
   }
 }
 
-/**
- * Searches YouTube Music for songs matching query
- * @param {string} query
- * @param {number} [limit=15]
- * @returns {Promise<Array<{id: string, title: string, artist: string, album: string, duration: number, cover: string, url: string, source: string}>>}
- */
 export async function searchYouTubeMusic(query, limit = 15) {
   if (!query || typeof query !== 'string') return [];
   const q = query.trim();

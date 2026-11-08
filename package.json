@@ -3,20 +3,26 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Compress, batch-process and temporarily host audio files.",
-  "scripts": {
-    "build": "node scripts/build.js && npm run build:css",
-    "start": "node src/server.js",
-    "dev": "node --watch src/server.js",
-    "test": "node scripts/test.js",
-    "test:spotify": "node scripts/test_spotify.js",
-    "format": "prettier --write src scripts web package.json",
-    "build:css": "tailwindcss -i web/styles.css -o public/assets/styles.css --minify",
-    "check": "node scripts/check.js",
-    "prestart": "node scripts/ensure-build.js"
+  "description": "Download, convert, and compress audio. Search YouTube Music, import Spotify playlists, upload files.",
+  "license": "MIT",
+  "author": "paragon506",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paragon506/samp-ytm.git"
   },
   "engines": {
     "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.js && npm run build:css",
+    "build:css": "tailwindcss -i web/styles.css -o public/assets/styles.css --minify",
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "prestart": "node scripts/ensure-build.js",
+    "test": "node scripts/test.js",
+    "test:spotify": "node scripts/test_spotify.js",
+    "format": "prettier --write src scripts web package.json",
+    "check": "node scripts/check.js"
   },
   "dependencies": {
     "archiver": "^7.0.1",

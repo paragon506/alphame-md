@@ -168,7 +168,6 @@ app.post(
   wrap(async (req, res) => {
     const opts = normalizeOpts(req.body.opts);
 
-    // Single track download (e.g. from playlist item download button)
     if (req.body.track) {
       const t = normalizeTrack(req.body.track);
       const query = t.query || `${t.title} ${t.artist}`.trim();
@@ -195,7 +194,6 @@ app.post(
       return res.json({ jobs: [job], problems: [] });
     }
 
-    // Batch tracks download (e.g. from playlist "Download All")
     if (Array.isArray(req.body.tracks) && req.body.tracks.length) {
       const created = [];
       const batchList = MAX_PLAYLIST > 0 ? req.body.tracks.slice(0, MAX_PLAYLIST) : req.body.tracks;

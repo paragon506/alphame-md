@@ -66,7 +66,6 @@ export function fetchYouTubePlaylist(url, options = {}) {
             : `https://www.youtube.com/watch?v=${x.id}`;
           const title = x.title || x.id || 'YouTube Audio';
           const artist = x.uploader || x.channel || '';
-          // Clean YouTube thumbnail: prefer direct i.ytimg.com thumbnail for maximum reliability
           let cover = x.id ? `https://i.ytimg.com/vi/${x.id}/hqdefault.jpg` : '';
           if (!cover && x.thumbnails && x.thumbnails.length) {
             cover = x.thumbnails.at(-1)?.url || '';

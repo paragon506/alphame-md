@@ -94,7 +94,6 @@ function renderTrackItem(track, getOptions, onQueued) {
 
   const btn = item.querySelector('.dl-btn');
 
-  // Mark if previously downloaded, but keep button active
   if (wasDownloaded(track)) {
     btn.innerHTML = icon('check');
     btn.classList.add('text-accent');

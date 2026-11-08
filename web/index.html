@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#090a0d" />
-    <title>AlphaMe · High-Fidelity Music Downloader & Compressor</title>
+    <title>AlphaMe · a free music downloader</title>
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111317'/%3E%3Cpath d='M6 16h2M11 11v10M16 6v20M21 11v10M26 14v4' stroke='%2310b981' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E"
@@ -14,10 +14,8 @@
     <script type="module" src="js/main.js"></script>
   </head>
   <body class="flex min-h-screen flex-col bg-ink text-fg antialiased">
-    <!-- Header -->
     <header class="border-edge border-b bg-panel/80 backdrop-blur sticky top-0 z-30">
       <div class="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <!-- Logo (No Studio tag, smooth scroll on click) -->
         <div
           class="flex items-center gap-2.5 font-bold tracking-tight text-base cursor-pointer select-none group"
           onclick="window.scrollTo({top:0, behavior:'smooth'})"
@@ -35,7 +33,6 @@
         </div>
 
         <div class="flex items-center gap-3">
-          <!-- Live Server Health Badge -->
           <div
             class="flex items-center gap-2 text-xs border border-edge bg-raised/60 px-2.5 py-1 rounded-full text-muted"
             title="Server connection"
@@ -46,8 +43,6 @@
             ></span>
             <span id="statusText" class="font-medium text-[11px]">Connecting…</span>
           </div>
-
-          <!-- Preferences Toggle -->
           <button
             id="settingsToggle"
             class="btn btn-icon"
@@ -68,7 +63,6 @@
 
     <main class="flex-1 py-6">
       <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <!-- Collapsible Settings Panel -->
         <section
           id="settingsPanel"
           class="card mb-6 hidden flex-col gap-4 p-5 animate-enter border-accent/20 bg-panel"
@@ -101,12 +95,8 @@
             processing.
           </p>
         </section>
-
-        <!-- Main Responsive Studio Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          <!-- Left Workspace: Search, Dropzone, Playlist, and Queue (8 cols) -->
           <div class="lg:col-span-8 flex flex-col gap-5">
-            <!-- Navigation Tabs (Search vs Import/Upload) -->
             <div class="flex items-center gap-2">
               <div class="flex rounded-lg border border-edge bg-panel p-1 gap-1">
                 <button
@@ -139,8 +129,6 @@
                 </button>
               </div>
             </div>
-
-            <!-- 1. Search YouTube Music Panel -->
             <section
               id="browserPanel"
               class="card p-5 flex flex-col gap-3.5 animate-enter"
@@ -177,8 +165,6 @@
                   Search
                 </button>
               </div>
-
-              <!-- Quick search suggestions -->
               <div class="flex flex-wrap items-center gap-1.5 text-xs text-muted">
                 <span class="text-[11px] uppercase tracking-wider opacity-60">Popular:</span>
                 <button
@@ -227,16 +213,12 @@
                   Dua Lipa
                 </button>
               </div>
-
-              <!-- Search Status & Results list -->
               <p id="browserStatus" class="text-xs text-muted min-h-4 hidden"></p>
               <div
                 id="browserResults"
                 class="flex flex-col gap-1 max-h-[440px] overflow-y-auto pr-1"
               ></div>
             </section>
-
-            <!-- 2. Link Import & Audio File Upload (Single-line input, no resize corner) -->
             <section
               id="dropzone"
               class="card data-[over=true]:border-accent border-dashed p-5 transition-colors data-[over=true]:bg-raised/40 hidden animate-enter flex flex-col gap-4"

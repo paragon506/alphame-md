@@ -1,5 +1,15 @@
-node_modules
-.git
-public
-*.zip
+# build output
+public/
+
+# runtime
 .env
+*.zip
+cookies.txt
+.alphame_jobs_store.json
+
+# version control
+.git/
+
+# editors
+.vscode/
+.idea/

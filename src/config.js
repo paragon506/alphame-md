@@ -1,23 +1,9 @@
-import fs from 'node:fs';
 import path from 'node:path';
-
-if (process.platform === 'win32') {
-  const shutterPath = 'C:\\Program Files\\Shutter Encoder\\app\\Library';
-  if (fs.existsSync(shutterPath) && !process.env.PATH?.includes(shutterPath)) {
-    process.env.PATH = `${shutterPath};${process.env.PATH || ''}`;
-  }
-  const pythonScripts =
-    'C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.15-64\\Scripts';
-  if (fs.existsSync(pythonScripts) && !process.env.PATH?.includes(pythonScripts)) {
-    process.env.PATH = `${pythonScripts};${process.env.PATH || ''}`;
-  }
-}
+import os from 'node:os';
 
 const env = (k, d) => process.env[k] ?? d;
 export const PORT = +env('PORT', 3000);
-export const WORK = path.resolve(
-  env('WORK_DIR', path.join(process.env.TMPDIR || '/tmp', 'alphame')),
-);
+export const WORK = path.resolve(env('WORK_DIR', path.join(os.tmpdir(), 'alphame')));
 export const TTL_MS = +env('TTL_MINUTES', 60) * 60_000;
 export const MAX_BYTES = +env('MAX_FILE_MB', 200) * 1024 * 1024;
 export const CONCURRENCY = Math.max(1, +env('CONCURRENCY', 2));
@@ -55,8 +41,6 @@ export const PROFILES = {
   auto: { format: 'mp3', bitrate: 192, vbr: false, auto: true },
   best: { format: 'mp3', bitrate: 320, vbr: true },
   balanced: { format: 'mp3', bitrate: 192, vbr: false },
-  // raised from 96 → 128 kbps minimum
   small: { format: 'mp3', bitrate: 128, vbr: false, channels: 2 },
 };
-// Allowed discrete bitrates — minimum is 128 kbps
 export const STD_BR = [320, 256, 192, 160, 128];
