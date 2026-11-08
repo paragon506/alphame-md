@@ -3,38 +3,59 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0e0f11" />
-    <title>AlphaMe</title>
+    <meta name="theme-color" content="#0a0b0d" />
+    <title>AlphaMe · High-Fidelity Music Downloader & Compressor</title>
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23131416'/%3E%3Cpath d='M7 16h2M12 11v10M17 7v18M22 12v8M26 15v2' stroke='%237dd3a8' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f1114'/%3E%3Cpath d='M6 16h2M11 11v10M16 6v20M21 11v10M26 14v4' stroke='%2310b981' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E"
     />
     <link rel="stylesheet" href="assets/styles.css" />
     <script src="config.js"></script>
     <script type="module" src="js/main.js"></script>
   </head>
-  <body class="flex min-h-screen flex-col">
-    <header class="border-edge border-b">
-      <div class="mx-auto flex h-14 w-full max-w-4xl items-center gap-4 px-4">
-        <a href="#top" class="flex items-center gap-2 text-[17px] font-semibold tracking-tight">
-          <svg class="icon text-accent size-[22px]" viewBox="0 0 24 24">
-            <path d="M3 12h1M8 8v8M13 4v16M18 8v8M21 11v2" />
-          </svg>
-          AlphaMe
+  <body class="flex min-h-screen flex-col bg-[#0a0b0d] text-[#e7e8ea] antialiased">
+    <!-- Header -->
+    <header class="border-edge border-b bg-[#0f1114]/80 backdrop-blur sticky top-0 z-30">
+      <div class="mx-auto flex h-14 w-full max-w-5xl items-center gap-4 px-4 sm:px-6">
+        <a
+          href="#top"
+          class="flex items-center gap-2.5 font-semibold tracking-tight text-base group"
+        >
+          <div
+            class="size-8 rounded-lg bg-gradient-to-br from-accent-deep via-[#142e23] to-[#0a1a14] border border-accent/30 flex items-center justify-center text-accent shadow-sm shadow-accent/10 group-hover:border-accent/60 transition-all"
+          >
+            <svg class="icon size-4.5" viewBox="0 0 24 24">
+              <path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4" />
+            </svg>
+          </div>
+          <span class="flex items-center gap-1.5 font-bold tracking-tight">
+            AlphaMe
+            <span
+              class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-accent/10 border border-accent/20 text-accent font-semibold tracking-widest"
+              >Studio</span
+            >
+          </span>
         </a>
+
         <div class="flex-1"></div>
-        <div class="text-muted flex items-center gap-1.5 text-xs" title="Server status">
+
+        <!-- Live Server Status Indicator -->
+        <div
+          class="flex items-center gap-2 text-xs border border-edge bg-raised/50 px-2.5 py-1 rounded-full text-muted"
+          title="Server status"
+        >
           <span
             id="statusDot"
-            class="size-[7px] rounded-full bg-neutral-600 data-[state=ok]:bg-accent data-[state=down]:bg-danger"
+            class="size-2 rounded-full bg-neutral-600 data-[state=ok]:bg-accent data-[state=down]:bg-danger transition-colors relative"
           ></span>
-          <span id="statusText">…</span>
+          <span id="statusText" class="font-medium text-[11px]">Connecting…</span>
         </div>
+
         <button
           id="settingsToggle"
           class="btn btn-icon"
           aria-label="Settings"
-          title="Settings"
+          title="Preferences & Settings"
           aria-expanded="false"
         >
           <svg class="icon" viewBox="0 0 24 24">
@@ -47,49 +68,184 @@
       </div>
     </header>
 
-    <main id="top" class="flex-1 py-6">
-      <div class="mx-auto w-full max-w-4xl px-4">
-        <!-- Settings panel -->
+    <main id="top" class="flex-1 py-7">
+      <div class="mx-auto w-full max-w-5xl px-4 sm:px-6">
+        <!-- Settings drawer panel -->
         <section
           id="settingsPanel"
-          class="card mb-4 hidden flex-col gap-4 p-5"
+          class="card mb-5 hidden flex-col gap-4 p-5 animate-enter border-accent/20 bg-[#121417]"
           aria-label="Settings"
         >
-          <h3 class="text-sm font-semibold">Preferences</h3>
+          <div class="flex items-center justify-between border-b border-edge pb-2">
+            <h3 class="text-sm font-semibold text-fg">Preferences</h3>
+            <span class="text-xs text-muted">Auto-saved in browser</span>
+          </div>
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label class="field-label">
-              Default compression profile
+              Default Profile
               <select id="defaultProfile" class="field">
-                <option value="auto">Auto (recommended)</option>
-                <option value="best">Best quality — 320 kbps VBR</option>
+                <option value="auto">Auto — Best ratio (Min 128 kbps)</option>
+                <option value="best">Best Quality — 320 kbps VBR</option>
                 <option value="balanced">Balanced — 192 kbps</option>
-                <option value="small">Small — 128 kbps</option>
+                <option value="small">Compact — 128 kbps</option>
               </select>
             </label>
             <label class="field-label">
-              Direct links
-              <label class="check mt-1">
+              Temporary Direct Links
+              <label class="check mt-2">
                 <input type="checkbox" id="defaultHost" />
-                Create a temporary link for every result
+                <span>Create streaming URL for each file</span>
               </label>
             </label>
           </div>
           <p class="text-muted text-xs">
-            Saved in this browser. Files and links expire <span data-ttl>1 hour</span> after
+            Files and streaming links automatically expire <span data-ttl>1 hour</span> after
             processing.
           </p>
         </section>
 
-        <!-- Import area -->
+        <!-- Mode Navigation Tabs -->
+        <div class="flex items-center gap-2 mb-3">
+          <div class="flex rounded-lg border border-edge bg-panel p-1 gap-1">
+            <button
+              id="tabSearchMode"
+              class="px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all bg-raised text-fg border border-edge-strong shadow-sm"
+              onclick="
+                document.getElementById('browserPanel').classList.remove('hidden');
+                document.getElementById('dropzone').classList.add('hidden');
+                this.className =
+                  'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all bg-raised text-fg border border-edge-strong shadow-sm';
+                document.getElementById('tabImportMode').className =
+                  'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all text-muted hover:text-fg';
+              "
+            >
+              Search YouTube Music
+            </button>
+            <button
+              id="tabImportMode"
+              class="px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all text-muted hover:text-fg"
+              onclick="
+                document.getElementById('dropzone').classList.remove('hidden');
+                document.getElementById('browserPanel').classList.add('hidden');
+                this.className =
+                  'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all bg-raised text-fg border border-edge-strong shadow-sm';
+                document.getElementById('tabSearchMode').className =
+                  'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all text-muted hover:text-fg';
+              "
+            >
+              Paste Link or Drop Files
+            </button>
+          </div>
+          <div class="flex-1"></div>
+        </div>
+
+        <!-- 1. Integrated Search & Browser Panel -->
+        <section
+          id="browserPanel"
+          class="card p-5 flex flex-col gap-3.5 animate-enter shadow-lg shadow-black/20"
+          aria-label="YouTube Music Browser"
+        >
+          <div class="flex flex-col gap-1">
+            <h2 class="text-base font-semibold text-fg">Search & Download Songs</h2>
+            <p class="text-muted text-xs">
+              Directly searches official studio tracks on YouTube Music. No video intros, skits, or
+              visualizers.
+            </p>
+          </div>
+
+          <div class="flex items-stretch gap-2 mt-1">
+            <div class="relative flex-1">
+              <input
+                id="browserInput"
+                type="text"
+                class="field w-full pl-9 py-2.5 text-sm"
+                placeholder="Search song, artist, or album (e.g. The Weeknd, Bohemian Rhapsody, Dua Lipa)…"
+              />
+              <svg
+                class="icon absolute left-3 top-3.5 text-muted pointer-events-none"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+            </div>
+            <button id="browserBtn" class="btn btn-primary px-4 py-2.5 font-medium shrink-0">
+              <svg class="icon" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+              Search
+            </button>
+          </div>
+
+          <!-- Quick search chip suggestions -->
+          <div class="flex flex-wrap items-center gap-1.5 text-xs text-muted">
+            <span class="text-[11px] uppercase tracking-wider opacity-70">Popular:</span>
+            <button
+              class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
+              onclick="
+                document.getElementById('browserInput').value = 'The Weeknd Blinding Lights';
+                document.getElementById('browserBtn').click();
+              "
+            >
+              The Weeknd
+            </button>
+            <button
+              class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
+              onclick="
+                document.getElementById('browserInput').value = 'Daft Punk';
+                document.getElementById('browserBtn').click();
+              "
+            >
+              Daft Punk
+            </button>
+            <button
+              class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
+              onclick="
+                document.getElementById('browserInput').value = 'Bad Bunny';
+                document.getElementById('browserBtn').click();
+              "
+            >
+              Bad Bunny
+            </button>
+            <button
+              class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
+              onclick="
+                document.getElementById('browserInput').value = 'Queen';
+                document.getElementById('browserBtn').click();
+              "
+            >
+              Queen
+            </button>
+            <button
+              class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
+              onclick="
+                document.getElementById('browserInput').value = 'Dua Lipa';
+                document.getElementById('browserBtn').click();
+              "
+            >
+              Dua Lipa
+            </button>
+          </div>
+
+          <!-- Search Status & Results list -->
+          <p id="browserStatus" class="text-xs text-muted min-h-4 hidden"></p>
+          <div
+            id="browserResults"
+            class="flex flex-col gap-1 max-h-[460px] overflow-y-auto pr-1"
+          ></div>
+        </section>
+
+        <!-- 2. Link & File Dropzone Panel (Initially hidden, toggled by tabs) -->
         <section
           id="dropzone"
-          class="card data-[over=true]:border-accent border-dashed px-5 py-6 transition-colors data-[over=true]:bg-[#14201a]"
+          class="card data-[over=true]:border-accent border-dashed px-5 py-6 transition-colors data-[over=true]:bg-[#14201a] hidden animate-enter"
         >
           <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
-            <div class="flex flex-col gap-2.5 sm:w-56 shrink-0">
-              <h1 class="text-[16px] font-semibold">Drop audio files here</h1>
-              <p class="text-muted text-sm">MP3, M4A, WAV, FLAC, OGG, Opus and more</p>
-              <button id="pickFiles" class="btn btn-primary w-fit">
+            <div class="flex flex-col gap-2.5 sm:w-60 shrink-0">
+              <h2 class="text-[15px] font-semibold text-fg">Upload Audio Files</h2>
+              <p class="text-muted text-xs">MP3, M4A, WAV, FLAC, OGG, Opus, WebM and more</p>
+              <button id="pickFiles" class="btn btn-primary w-fit mt-1">
                 <svg class="icon" viewBox="0 0 24 24">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
                 </svg>
@@ -104,15 +260,17 @@
               />
             </div>
             <div class="flex flex-1 flex-col gap-2">
-              <p class="text-muted text-xs font-medium uppercase tracking-wide">Or paste a link</p>
+              <p class="text-muted text-xs font-medium uppercase tracking-wide">
+                Or paste links (Playlists, URLs, or M3U)
+              </p>
               <div class="flex items-stretch gap-2">
                 <textarea
                   id="urlInput"
-                  rows="1"
-                  class="field max-h-40 min-h-10 flex-1 resize-y text-left"
-                  placeholder="Spotify playlist, YouTube, YouTube Music, direct audio, M3U…"
+                  rows="2"
+                  class="field max-h-40 min-h-11 flex-1 resize-y text-left text-xs"
+                  placeholder="Paste Spotify playlist URL, YouTube link, YouTube Music album, or audio URL…"
                 ></textarea>
-                <button id="importBtn" class="btn justify-center self-start">
+                <button id="importBtn" class="btn justify-center self-start h-11 px-4">
                   <svg class="icon" viewBox="0 0 24 24">
                     <path
                       d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"
@@ -126,10 +284,10 @@
           </div>
         </section>
 
-        <!-- Playlist view -->
+        <!-- 3. Playlist View (Spotify or YouTube playlist) -->
         <section
           id="playlistSection"
-          class="card mt-3 hidden flex-col gap-3 p-4 animate-enter"
+          class="card mt-3.5 hidden flex-col gap-3.5 p-4 animate-enter border-accent/30 shadow-md"
           aria-label="Playlist View"
         >
           <div class="flex items-start gap-3.5">
@@ -137,18 +295,19 @@
               id="playlistCover"
               src=""
               alt=""
-              class="size-16 rounded-lg object-cover bg-edge shrink-0 hidden"
+              class="size-16 rounded-xl object-cover bg-edge shrink-0 hidden shadow"
+              onerror="this.style.display = 'none'"
             />
             <div class="min-w-0 flex-1">
               <div class="flex flex-wrap items-center gap-2">
                 <h2 id="playlistTitle" class="text-base font-semibold truncate text-fg"></h2>
-                <span id="playlistBadge" class="pill"></span>
+                <span id="playlistBadge" class="pill font-mono"></span>
                 <span id="playlistCount" class="text-xs text-muted"></span>
               </div>
               <p id="playlistDesc" class="text-muted text-xs truncate mt-1 hidden"></p>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-              <button id="playlistDownloadAll" class="btn btn-primary text-xs py-1 px-2.5">
+              <button id="playlistDownloadAll" class="btn btn-primary text-xs py-1.5 px-3">
                 Download all
               </button>
               <button
@@ -163,14 +322,14 @@
               </button>
             </div>
           </div>
-          <div class="flex items-center gap-2 mt-1">
+          <div class="flex items-center gap-2 mt-0.5">
             <input
               id="playlistSearch"
               type="text"
-              placeholder="Search tracks…"
-              class="field flex-1 py-1 px-2.5 text-xs"
+              placeholder="Filter tracks in playlist…"
+              class="field flex-1 py-1.5 px-3 text-xs"
             />
-            <span id="playlistSearchCount" class="text-xs text-muted shrink-0"></span>
+            <span id="playlistSearchCount" class="text-xs text-muted shrink-0 font-mono"></span>
           </div>
           <div
             id="playlistTracks"
@@ -178,19 +337,27 @@
           ></div>
         </section>
 
-        <!-- Compression options -->
-        <section class="card mt-3 flex flex-col gap-3 p-4" aria-label="Compression">
+        <!-- 4. Compression Engine Controls -->
+        <section class="card mt-4 flex flex-col gap-3.5 p-4" aria-label="Compression Engine">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-fg tracking-wide uppercase"
+              >Encoding Profile</span
+            >
+            <span class="text-[11px] text-muted font-mono">LAME / Opus / AAC</span>
+          </div>
+
           <div id="profileTabs" class="border-edge bg-ink flex gap-[3px] rounded-lg border p-[3px]">
             <button class="tab" data-profile="auto">Auto<small>Recommended</small></button>
             <button class="tab" data-profile="best">Best<small>320 kbps VBR</small></button>
             <button class="tab" data-profile="balanced">Balanced<small>192 kbps</small></button>
-            <button class="tab" data-profile="small">Small<small>128 kbps</small></button>
+            <button class="tab" data-profile="small">Compact<small>128 kbps</small></button>
             <button class="tab" data-profile="custom">Custom<small>Advanced</small></button>
           </div>
           <p id="autoHint" class="text-muted text-xs">
-            Picks the best quality-to-size ratio for each file. Minimum 128 kbps always enforced.
+            Automatically targets optimal quality for the audio source. Minimum 128 kbps enforced.
           </p>
-          <div id="advanced" class="hidden flex-col gap-3">
+
+          <div id="advanced" class="hidden flex-col gap-3 pt-1 border-t border-edge">
             <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
               <label class="field-label">
                 Format
@@ -210,13 +377,13 @@
                   max="320"
                   step="8"
                   value="192"
-                  class="field"
+                  class="field font-mono"
                 />
               </label>
               <label class="field-label">
                 Sample rate
-                <select id="sampleRate" class="field">
-                  <option value="0">Keep original</option>
+                <select id="sampleRate" class="field font-mono">
+                  <option value="0">Original</option>
                   <option value="48000">48 kHz</option>
                   <option value="44100">44.1 kHz</option>
                   <option value="32000">32 kHz</option>
@@ -225,7 +392,7 @@
               <label class="field-label">
                 Channels
                 <select id="channels" class="field">
-                  <option value="0">Keep original</option>
+                  <option value="0">Original</option>
                   <option value="2">Stereo</option>
                   <option value="1">Mono</option>
                 </select>
@@ -233,30 +400,36 @@
             </div>
             <label class="check">
               <input type="checkbox" id="vbr" />
-              Variable bitrate (VBR) — better quality at same size (not for M4A)
+              <span>Variable Bitrate (VBR) — Higher fidelity at lower file size</span>
             </label>
           </div>
+
           <label class="check">
             <input type="checkbox" id="hostToggle" />
-            <span
-              >Temporary direct link
-              <span class="text-muted text-xs">(deleted after <span data-ttl>1 hour</span>)</span>
+            <span class="text-xs">
+              Generate public streaming URL
+              <span class="text-muted">(direct link expires in <span data-ttl>1 hour</span>)</span>
             </span>
           </label>
         </section>
 
-        <!-- Queue -->
-        <div class="mt-6 mb-2 flex flex-wrap items-center gap-2">
-          <h2 class="text-[15px] font-semibold">Queue</h2>
-          <span id="queueCount" class="text-muted text-xs"></span>
+        <!-- 5. Active Queue & Downloads -->
+        <div class="mt-7 mb-2.5 flex flex-wrap items-center gap-2">
+          <div class="flex items-center gap-2">
+            <h2 class="text-base font-semibold text-fg">Queue</h2>
+            <span
+              id="queueCount"
+              class="text-xs text-muted font-mono bg-raised px-2 py-0.5 rounded-full border border-edge"
+            ></span>
+          </div>
           <div class="flex-1"></div>
-          <button id="zipBtn" class="btn" disabled>
+          <button id="zipBtn" class="btn text-xs py-1.5 px-3" disabled>
             <svg class="icon" viewBox="0 0 24 24">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
             </svg>
             Download ZIP
           </button>
-          <button id="clearBtn" class="btn" disabled>
+          <button id="clearBtn" class="btn text-xs py-1.5 px-3" disabled>
             <svg class="icon" viewBox="0 0 24 24">
               <path
                 d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
@@ -265,71 +438,103 @@
             Clear done
           </button>
         </div>
+
         <div id="batchBar" class="bar mb-3" hidden><i></i></div>
-        <div id="queueList" class="flex flex-col gap-2"></div>
+        <div id="queueList" class="flex flex-col gap-2.5"></div>
+
         <p
           id="emptyState"
-          class="border-edge text-muted rounded-xl border border-dashed py-7 pl-5 text-sm"
+          class="border-edge text-muted rounded-xl border border-dashed py-8 px-6 text-sm text-left flex flex-col gap-1 bg-panel/30"
         >
-          Nothing here yet — drop files or paste a link above.
+          <span class="font-medium text-fg">Nothing in queue right now.</span>
+          <span
+            >Use the search bar above to look up any track, or paste links from Spotify and
+            YouTube.</span
+          >
         </p>
 
-        <section id="notes" class="text-muted mt-9 text-[13px]">
-          <h2 class="text-fg mb-2 text-[15px] font-semibold">Notes</h2>
-          <ul class="list-disc space-y-1 pl-5">
+        <!-- Information & Guidelines -->
+        <section id="notes" class="text-muted mt-10 text-[13px] border-t border-edge pt-6">
+          <h2 class="text-fg mb-2.5 text-sm font-semibold">Technical Highlights</h2>
+          <ul class="list-disc space-y-1.5 pl-5 text-xs text-muted/90">
             <li>
-              Compressing a lossy file never restores lost quality. AlphaMe keeps the original when
-              it already fits the target — minimum output bitrate is 128 kbps.
+              <b class="text-fg">Studio Releases Only:</b> Spotify tracks are matched against
+              official YouTube Music label tracks (ATV), preventing video clips, intros, and
+              visualizers.
             </li>
-            <li>YouTube, YouTube Music, and Spotify public playlists are supported.</li>
-            <li>Results and links are deleted <span data-ttl>1 hour</span> after processing.</li>
+            <li>
+              <b class="text-fg">Lossless Compression Floor:</b> Minimum bitrate is clamped at 128
+              kbps to prevent muddy audio artifacts.
+            </li>
+            <li>
+              <b class="text-fg">Session Preservation:</b> Completed downloads and audio history are
+              kept across server updates.
+            </li>
             <li id="limitsNote"></li>
           </ul>
         </section>
       </div>
     </main>
 
-    <footer class="border-edge text-muted border-t py-4 text-xs">
-      <div class="mx-auto flex w-full max-w-4xl flex-wrap justify-between gap-2 px-4">
-        <span
-          >Created by paragon506 —
+    <!-- Professional Footer with GitHub Button -->
+    <footer class="border-edge text-muted border-t py-6 text-xs bg-[#0c0d0f]">
+      <div
+        class="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 sm:px-6"
+      >
+        <div class="flex items-center gap-3">
           <a
-            class="hover:text-fg underline"
-            href="https://github.com/paragon506"
+            href="https://github.com/paragon506/samp-ytm"
             target="_blank"
             rel="noopener"
-            >github.com/paragon506</a
-          ></span
-        >
-        <span>Independent project, not officially affiliated.</span>
+            class="btn gap-2 text-xs py-1.5 px-3 bg-panel hover:bg-raised text-fg border-edge font-medium"
+          >
+            <svg class="size-4 fill-current shrink-0" viewBox="0 0 24 24">
+              <path
+                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"
+              />
+            </svg>
+            <span>View on GitHub</span>
+          </a>
+          <span class="text-muted/80">Developed by paragon506</span>
+        </div>
+        <div class="flex items-center gap-2 text-muted/60 font-mono text-[11px]">
+          <span>FFmpeg</span> • <span>yt-dlp</span> • <span>spotifyscraper</span>
+        </div>
       </div>
     </footer>
 
     <div
       id="toast"
       role="status"
-      class="border-edge-strong bg-raised pointer-events-none fixed bottom-6 left-1/2 max-w-[92vw] -translate-x-1/2 translate-y-5 rounded-lg border px-3.5 py-2 text-[13px] opacity-0 transition data-[show=true]:translate-y-0 data-[show=true]:opacity-100"
+      class="border-edge-strong bg-raised pointer-events-none fixed bottom-6 left-1/2 max-w-[92vw] -translate-x-1/2 translate-y-5 rounded-lg border px-3.5 py-2 text-[13px] opacity-0 transition data-[show=true]:translate-y-0 data-[show=true]:opacity-100 z-50 shadow-xl"
     ></div>
 
     <template id="rowTemplate">
-      <article class="card animate-enter px-3.5 py-3">
-        <div class="flex items-center gap-2.5">
+      <article
+        class="card animate-enter px-4 py-3.5 border-edge/80 hover:border-edge transition-colors"
+      >
+        <div class="flex items-center gap-3">
           <div class="min-w-0 flex-1">
-            <div data-role="title" class="truncate font-medium"></div>
-            <div data-role="sub" class="text-muted truncate text-xs"></div>
+            <div data-role="title" class="truncate font-semibold text-sm text-fg"></div>
+            <div data-role="sub" class="text-muted truncate text-xs mt-0.5"></div>
           </div>
-          <span data-role="pill" class="pill"></span>
-          <div data-role="actions" class="flex gap-1.5"></div>
+          <span data-role="pill" class="pill font-mono text-[11px]"></span>
+          <div data-role="actions" class="flex gap-1.5 items-center"></div>
         </div>
         <div data-role="bar" class="bar mt-2.5"><i></i></div>
         <div
           data-role="result"
-          class="mt-2.5 hidden flex-wrap items-center gap-x-4 gap-y-2 text-[13px]"
+          class="mt-3 hidden flex-wrap items-center gap-x-4 gap-y-2 text-[13px] border-t border-edge/40 pt-2.5"
         >
-          <span data-role="sizes" class="text-muted"></span>
-          <b data-role="saved" class="text-accent font-semibold"></b>
-          <span data-role="meta" class="text-muted"></span>
-          <audio data-role="player" controls preload="none" class="h-9 w-full"></audio>
+          <span data-role="sizes" class="text-muted font-mono text-xs"></span>
+          <b data-role="saved" class="text-accent font-semibold text-xs font-mono"></b>
+          <span data-role="meta" class="text-muted text-xs"></span>
+          <audio
+            data-role="player"
+            controls
+            preload="none"
+            class="h-9 w-full rounded-md mt-1"
+          ></audio>
         </div>
         <form
           data-role="editor"
@@ -351,8 +556,8 @@
             >Genre<input name="genre" maxlength="200" class="field"
           /></label>
           <div class="flex flex-wrap items-center gap-2 sm:col-span-2">
-            <button type="submit" class="btn btn-primary">Save tags</button>
-            <button type="button" data-role="cancelEdit" class="btn">Cancel</button>
+            <button type="submit" class="btn btn-primary text-xs">Save tags</button>
+            <button type="button" data-role="cancelEdit" class="btn text-xs">Cancel</button>
             <span class="text-muted text-xs">Cover art is kept. The audio is not re-encoded.</span>
           </div>
         </form>

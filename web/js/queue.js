@@ -18,6 +18,26 @@ const LABELS = {
 };
 
 const rows = new Map();
+const STORAGE_JOBS_KEY = 'alphame-cached-jobs';
+
+export function loadCachedJobs() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_JOBS_KEY) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+export function saveCachedJobs(list) {
+  try {
+    const doneOnly = list.filter((j) => j.status === 'done').slice(-200);
+    localStorage.setItem(STORAGE_JOBS_KEY, JSON.stringify(doneOnly));
+  } catch {}
+}
+
+export function clearQueueStorage() {
+  localStorage.removeItem(STORAGE_JOBS_KEY);
+}
 
 export const isActive = (job) => ACTIVE.has(job.status);
 
@@ -208,6 +228,14 @@ function updateRow(row, job, refresh) {
 }
 
 export function renderQueue(jobs, refresh) {
+  // If server returns jobs, cache completed ones; if server restarted and is empty, restore cache
+  if (Array.isArray(jobs) && jobs.length > 0) {
+    saveCachedJobs(jobs);
+  } else {
+    const cached = loadCachedJobs();
+    if (cached.length > 0) jobs = cached;
+  }
+
   const list = $('#queueList');
   const seen = new Set();
 

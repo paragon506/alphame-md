@@ -11,6 +11,64 @@ export const jobs = new Map();
 const queue = [];
 let running = 0;
 
+const STORE_PATH = path.join(path.dirname(WORK), '.alphame_jobs_store.json');
+
+function serializeJob(j) {
+  return {
+    id: j.id,
+    client: j.client,
+    status: j.status,
+    progress: j.progress,
+    title: j.title,
+    artist: j.artist,
+    cover: j.cover,
+    filename: j.filename,
+    outName: j.outName,
+    duration: j.duration,
+    origSize: j.origSize,
+    newSize: j.newSize,
+    format: j.opts?.format,
+    opts: j.opts,
+    note: j.note,
+    error: j.error,
+    hosted: j.hosted,
+    srcInfo: j.srcInfo,
+    created: j.created,
+    finished: j.finished,
+    out: j.out,
+    source: j.source,
+    tags: j.tags,
+  };
+}
+
+export function persistJobs() {
+  try {
+    const list = [...jobs.values()]
+      .filter((j) => j.status === 'done' && j.out && fs.existsSync(j.out))
+      .map(serializeJob);
+    fs.writeFileSync(STORE_PATH, JSON.stringify(list), 'utf8');
+  } catch {}
+}
+
+export function restoreJobs() {
+  try {
+    if (!fs.existsSync(STORE_PATH)) return;
+    const raw = JSON.parse(fs.readFileSync(STORE_PATH, 'utf8') || '[]');
+    for (const item of raw) {
+      if (item.out && fs.existsSync(item.out)) {
+        jobs.set(item.id, {
+          ...item,
+          proc: null,
+          abort: null,
+          src: null,
+        });
+      }
+    }
+  } catch {}
+}
+
+restoreJobs();
+
 export const stats = () => ({ jobs: jobs.size, running });
 
 export function requeue(job) {
@@ -162,6 +220,7 @@ export async function runJob(job) {
     job.proc = null;
     job.abort = null;
     job.finished = now();
+    persistJobs();
   }
 }
 export function dispose(j) {
@@ -172,6 +231,7 @@ export function dispose(j) {
   rm(j.out);
   for (const n of fs.readdirSync(WORK)) if (n.startsWith(j.id)) rm(path.join(WORK, n));
   jobs.delete(j.id);
+  persistJobs();
 }
 export function sweep() {
   const t = now();

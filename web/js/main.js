@@ -2,8 +2,9 @@ import { $ } from './dom.js';
 import { request, fetchPublic, uploadFiles, withClient } from './api.js';
 import { formatTtl } from './format.js';
 import { getOptions, initOptions } from './options.js';
-import { renderQueue } from './queue.js';
+import { renderQueue, clearQueueStorage } from './queue.js';
 import { notify } from './toast.js';
+import { initBrowser } from './browser.js';
 import {
   initPlaylistUI,
   loadPlaylistFromUrl,
@@ -147,6 +148,7 @@ async function refreshStatus() {
 
 initOptions();
 initDropzone();
+initBrowser({ getOptions, onQueued: poll });
 initPlaylistUI({ getOptions, onQueued: poll });
 
 const urlInput = $('#urlInput');
@@ -171,9 +173,10 @@ $('#importBtn').addEventListener('click', handleImport);
 $('#zipBtn').addEventListener('click', () => {
   location.href = withClient('/api/zip');
 });
-$('#clearBtn').addEventListener('click', () =>
-  request('/api/clear', { method: 'POST' }).then(poll),
-);
+$('#clearBtn').addEventListener('click', () => {
+  clearQueueStorage();
+  request('/api/clear', { method: 'POST' }).then(poll);
+});
 refreshStatus();
 setInterval(refreshStatus, HEALTH_MS);
 poll();

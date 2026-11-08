@@ -55,6 +55,8 @@ export function getYtDlpCommonArgs() {
     'node',
     '--remote-components',
     'ejs:github',
+    '--extractor-args',
+    'youtube:player_client=android,ios,mweb,web',
     ...getYtDlpCookieArgs(),
   ];
 }
@@ -66,15 +68,20 @@ export function ytList(url) {
       args.push('--playlist-end', String(MAX_PLAYLIST));
     }
     args.push(url);
-    execFile(YTDLP, args, { maxBuffer: 64e6, timeout: 180_000 }, (e, out) => {
-      if (e)
+    execFile(YTDLP, args, { maxBuffer: 64e6, timeout: 180_000 }, (e, out, stderr) => {
+      if (e) {
+        const errText = (stderr || e.message || '').toString();
+        let msg = 'Could not read that link (private, removed or unavailable)';
+        if (/sign in to confirm you/i.test(errText)) {
+          msg =
+            'YouTube blocked this request with bot verification. Configure cookies (via cookies.txt or YTDLP_COOKIES_BASE64).';
+        } else if (/does not exist/i.test(errText)) {
+          msg = 'This video or playlist does not exist or has been removed.';
+        }
         return reject(
-          new Error(
-            e.code === 'ENOENT'
-              ? 'yt-dlp is not installed on this server'
-              : 'Could not read that link (private, removed or unavailable)',
-          ),
+          new Error(e.code === 'ENOENT' ? 'yt-dlp is not installed on this server' : msg),
         );
+      }
       try {
         const j = JSON.parse(out);
         const list = (j.entries || [j]).filter(Boolean).map((x) => ({
@@ -99,8 +106,6 @@ export function ytDownload(job, url, base) {
       '--newline',
       '--max-filesize',
       `${Math.floor(MAX_BYTES / 1048576)}M`,
-      '--extractor-args',
-      'youtube:player_client=android,ios,mweb,web',
       '--socket-timeout',
       '30',
       '--retries',

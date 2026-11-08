@@ -44,6 +44,10 @@ export async function fetchPlaylistData(url) {
   });
 }
 
+export async function searchTracks(query) {
+  return request(`/api/search?q=${encodeURIComponent(query)}`);
+}
+
 export async function downloadTrack(track, opts) {
   return request('/api/import', {
     method: 'POST',

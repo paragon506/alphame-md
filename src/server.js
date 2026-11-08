@@ -25,9 +25,9 @@ import { ytList } from './sources.js';
 import { jobs, newJob, requeue, dispose, pub, stats, updateTags } from './jobs.js';
 import { fetchPlaylist, normalizeTrack } from './playlist_adapter.js';
 import { isSpotifyPlaylistUrl } from './spotify_reader.js';
+import { searchYouTubeMusic } from './ytmusic_resolver.js';
 
 const publicDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'public');
-fs.rmSync(WORK, { recursive: true, force: true });
 fs.mkdirSync(WORK, { recursive: true });
 
 const app = express();
@@ -148,6 +148,17 @@ app.get(
     if (!url) throw new Error('A playlist URL is required');
     const playlist = await fetchPlaylist(url);
     res.json({ playlist });
+  }),
+);
+
+app.get(
+  '/api/search',
+  need,
+  wrap(async (req, res) => {
+    const q = String(req.query.q || '').trim();
+    if (!q) return res.json({ results: [] });
+    const results = await searchYouTubeMusic(q);
+    res.json({ results });
   }),
 );
 

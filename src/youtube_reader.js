@@ -38,14 +38,18 @@ export function fetchYouTubePlaylist(url, options = {}) {
     }
     args.push(url.trim());
 
-    execFile(YTDLP, args, { maxBuffer: 64e6, timeout: 180_000 }, (err, out) => {
+    execFile(YTDLP, args, { maxBuffer: 64e6, timeout: 180_000 }, (err, out, stderr) => {
       if (err) {
+        const errText = (stderr || err.message || '').toString();
+        let msg = 'Could not read YouTube playlist (private, removed or unavailable)';
+        if (/sign in to confirm you/i.test(errText)) {
+          msg =
+            'YouTube blocked this request with bot verification. Configure cookies (via cookies.txt or YTDLP_COOKIES_BASE64).';
+        } else if (/does not exist/i.test(errText)) {
+          msg = 'This YouTube playlist does not exist or has been removed.';
+        }
         return reject(
-          new Error(
-            err.code === 'ENOENT'
-              ? 'yt-dlp is not installed on this server'
-              : 'Could not read YouTube playlist (private, removed or unavailable)',
-          ),
+          new Error(err.code === 'ENOENT' ? 'yt-dlp is not installed on this server' : msg),
         );
       }
 
@@ -53,7 +57,7 @@ export function fetchYouTubePlaylist(url, options = {}) {
         const j = JSON.parse(out);
         const entries = (j.entries || [j]).filter(Boolean);
         const playlistTitle = j.title || 'YouTube Playlist';
-        const playlistCover =
+        let playlistCover =
           (j.thumbnails && j.thumbnails.length ? j.thumbnails.at(-1)?.url : '') || '';
 
         const tracks = entries.map((x) => {
@@ -62,8 +66,12 @@ export function fetchYouTubePlaylist(url, options = {}) {
             : `https://www.youtube.com/watch?v=${x.id}`;
           const title = x.title || x.id || 'YouTube Audio';
           const artist = x.uploader || x.channel || '';
-          const cover =
-            (x.thumbnails && x.thumbnails.length ? x.thumbnails.at(-1)?.url : '') || playlistCover;
+          // Clean YouTube thumbnail: prefer direct i.ytimg.com thumbnail for maximum reliability
+          let cover = x.id ? `https://i.ytimg.com/vi/${x.id}/hqdefault.jpg` : '';
+          if (!cover && x.thumbnails && x.thumbnails.length) {
+            cover = x.thumbnails.at(-1)?.url || '';
+          }
+          if (!cover) cover = playlistCover;
           const duration = Math.round(Number(x.duration) || 0);
 
           return {
@@ -80,6 +88,10 @@ export function fetchYouTubePlaylist(url, options = {}) {
             query: `${title} ${artist}`.trim(),
           };
         });
+
+        if (!playlistCover && tracks.length && tracks[0].cover) {
+          playlistCover = tracks[0].cover;
+        }
 
         resolve({
           success: true,
