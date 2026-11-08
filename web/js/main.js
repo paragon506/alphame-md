@@ -197,6 +197,30 @@ $('#clearHistoryBtn')?.addEventListener('click', () => {
   notify('History cleared');
   poll();
 });
+
+async function refreshGitHubStats() {
+  try {
+    const res = await fetch('https://api.github.com/repos/paragon506/alphame-md');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (typeof data.stargazers_count === 'number') {
+      const starEl = document.getElementById('ghCardStars');
+      const headStarEl = document.getElementById('ghHeaderStarCount');
+      if (starEl) starEl.textContent = String(data.stargazers_count);
+      if (headStarEl) headStarEl.textContent = String(data.stargazers_count);
+    }
+    if (typeof data.forks_count === 'number') {
+      const forkEl = document.getElementById('ghCardForks');
+      if (forkEl) forkEl.textContent = String(data.forks_count);
+    }
+    if (data.description) {
+      const descEl = document.getElementById('ghCardDesc');
+      if (descEl) descEl.textContent = data.description;
+    }
+  } catch {}
+}
+
 refreshStatus();
+refreshGitHubStats();
 setInterval(refreshStatus, HEALTH_MS);
 poll();
