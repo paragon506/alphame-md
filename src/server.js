@@ -344,6 +344,47 @@ app.post(
   }),
 );
 app.post(
+  '/api/jobs/:id/recompress',
+  need,
+  wrap(async (req, res) => {
+    const j = mine(req, res);
+    if (!j) return;
+    if (j.status !== 'done') throw new Error('Only finished jobs can be recompressed');
+
+    const newOpts = normalizeOpts(req.body.opts || j.opts);
+    j.opts = newOpts;
+
+    if (j.source) {
+      rm(j.out);
+      j.out = null;
+      rm(j.src);
+      j.src = null;
+    } else if (j.out && fs.existsSync(j.out)) {
+      const dest = path.join(WORK, `${j.id}.src`);
+      rm(dest);
+      fs.copyFileSync(j.out, dest);
+      rm(j.out);
+      j.out = null;
+      j.src = dest;
+    } else {
+      throw new Error('Original audio is no longer available on the server');
+    }
+
+    Object.assign(j, {
+      status: 'queued',
+      progress: 0,
+      newSize: 0,
+      error: '',
+      canceled: false,
+      finished: 0,
+      created: now(),
+      note: '',
+    });
+    requeue(j);
+    res.json(pub(j));
+  }),
+);
+app.post(
   '/api/jobs/:id/tags',
   need,
   wrap(async (req, res) => {

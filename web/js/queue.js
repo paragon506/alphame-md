@@ -3,6 +3,7 @@ import { request, withClient } from './api.js';
 import { icon } from './icons.js';
 import { formatBytes, formatDuration, minutesLeft } from './format.js';
 import { notify } from './toast.js';
+import { getOptions } from './options.js';
 
 const ACTIVE = new Set(['queued', 'downloading', 'analyzing', 'processing']);
 const SETTLED = new Set(['done', 'error', 'canceled']);
@@ -109,6 +110,22 @@ function actionsFor(row, job, refresh) {
       href: withClient(`/api/jobs/${job.id}/download`),
     });
     items.push({
+      icon: 'recompress',
+      label: 'Recompress with current settings',
+      run: async () => {
+        try {
+          await request(`/api/jobs/${job.id}/recompress`, {
+            method: 'POST',
+            json: { opts: getOptions() },
+          });
+          notify(`Recompressing: ${job.title}`);
+          refresh();
+        } catch (error) {
+          notify(error.message || 'Recompress failed');
+        }
+      },
+    });
+    items.push({
       icon: 'link',
       label: job.hosted ? 'Copy direct link' : 'Create direct link',
       run: () => copyDirectLink(job, refresh),
@@ -148,13 +165,14 @@ function updateResult(row, job) {
   if (job.hosted) meta.push(`public link · expires in ${minutesLeft(job.expiresAt)} min`);
   row.meta.textContent = meta.filter(Boolean).join(' · ');
   if (!row.playerReady) {
-    row.player.src = withClient(`/api/jobs/${job.id}/audio`);
+    row.player.src = withClient(`/api/jobs/${job.id}/audio?t=${job.finished || Date.now()}`);
     row.playerReady = true;
   }
 }
 
 function updateRow(row, job, refresh) {
   row.job = job;
+  if (isActive(job)) row.playerReady = false;
   bindEditor(row, refresh);
   if (job.status !== 'done') show(row.editor, false, 'grid');
   row.title.textContent = job.artist ? `${job.title} — ${job.artist}` : job.title;

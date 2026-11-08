@@ -94,21 +94,19 @@ export function ytDownload(job, url, base) {
   return new Promise((resolve, reject) => {
     const args = [
       '-f',
-      'bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio/best',
+      'ba/ba*/b',
       '--no-playlist',
       '--newline',
       '--max-filesize',
       `${Math.floor(MAX_BYTES / 1048576)}M`,
       '--extractor-args',
-      'youtube:player_client=android,ios',
+      'youtube:player_client=android,ios,mweb,web',
       '--socket-timeout',
-      '15',
+      '30',
       '--retries',
       '3',
       '--fragment-retries',
       '3',
-      '--concurrent-fragments',
-      '4',
       ...getYtDlpCommonArgs(),
       '-o',
       base + '.%(ext)s',
@@ -136,6 +134,9 @@ export function ytDownload(job, url, base) {
       if (/sign in to confirm you/i.test(err)) {
         msg =
           'YouTube blocked this request with bot verification. Configure cookies (via cookies.txt or YTDLP_COOKIES variable) to bypass this check.';
+      } else if (/Requested format is not available/i.test(err)) {
+        msg =
+          'YouTube did not provide audio streams for this link without authentication. Configure cookies (via cookies.txt or YTDLP_COOKIES_BASE64) to download it.';
       }
       reject(new Error(job.canceled ? 'Canceled' : 'Download failed: ' + msg));
     });
