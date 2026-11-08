@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0e0f11" />
+    <title>AlphaMe</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23131416'/%3E%3Cpath d='M7 16h2M12 11v10M17 7v18M22 12v8M26 15v2' stroke='%237dd3a8' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <script src="config.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <header class="border-edge border-b">
+      <div class="mx-auto flex h-14 w-full max-w-3xl items-center gap-4 px-4">
+        <a href="#top" class="flex items-center gap-2 text-[17px] font-semibold tracking-tight">
+          <svg class="icon text-accent size-[22px]" viewBox="0 0 24 24">
+            <path d="M3 12h1M8 8v8M13 4v16M18 8v8M21 11v2" />
+          </svg>
+          AlphaMe
+        </a>
+        <nav class="ml-2 hidden gap-1 sm:flex">
+          <a class="nav-link" href="#top">Compress</a>
+          <a class="nav-link" href="#notes">Notes</a>
+        </nav>
+        <div class="flex-1"></div>
+        <div class="text-muted flex items-center gap-1.5 text-xs" title="Server status">
+          <span
+            id="statusDot"
+            class="size-[7px] rounded-full bg-neutral-600 data-[state=ok]:bg-accent data-[state=down]:bg-danger"
+          ></span>
+          <span id="statusText">…</span>
+        </div>
+        <button
+          id="settingsToggle"
+          class="btn btn-icon"
+          aria-label="Settings"
+          title="Settings"
+          aria-expanded="false"
+        >
+          <svg class="icon" viewBox="0 0 24 24">
+            <path
+              d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.8l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7V20a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.8v-.5a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2z"
+            />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="top" class="flex-1 py-6">
+      <div class="mx-auto w-full max-w-3xl px-4">
+        <section
+          id="settingsPanel"
+          class="card mb-4 hidden flex-col gap-3.5 p-4"
+          aria-label="Settings"
+        >
+          <label class="field-label">
+            Default profile
+            <select id="defaultProfile" class="field">
+              <option value="auto">Auto (recommended)</option>
+              <option value="best">Best quality</option>
+              <option value="balanced">Balanced</option>
+              <option value="small">Smallest size</option>
+            </select>
+          </label>
+          <label class="check">
+            <input type="checkbox" id="defaultHost" />
+            Create a temporary direct link for every result
+          </label>
+          <p class="text-muted text-xs">
+            Saved in this browser. Files and links are deleted <span data-ttl>1 hour</span> after
+            processing.
+          </p>
+        </section>
+
+        <section
+          id="dropzone"
+          class="card data-[over=true]:border-accent border-dashed px-5 py-7 text-center transition-colors data-[over=true]:bg-[#14201a]"
+        >
+          <h1 class="text-[17px] font-semibold">Drop audio files here</h1>
+          <p class="text-muted mt-1 mb-4 text-sm">MP3, M4A, WAV, FLAC, OGG, Opus and more</p>
+          <button id="pickFiles" class="btn btn-primary">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+            </svg>
+            Choose files
+          </button>
+          <input
+            id="fileInput"
+            type="file"
+            multiple
+            hidden
+            accept="audio/*,.mp3,.m4a,.aac,.wav,.flac,.ogg,.opus,.wma,.aiff,.mp4,.webm"
+          />
+          <div class="mt-4 flex items-stretch gap-2 max-sm:flex-col">
+            <textarea
+              id="urlInput"
+              rows="1"
+              class="field max-h-40 min-h-10 flex-1 resize-y text-left"
+              placeholder="Paste links: Spotify playlists, YouTube / YouTube Music, direct audio, or M3U"
+            ></textarea>
+            <button id="importBtn" class="btn justify-center">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path
+                  d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"
+                />
+              </svg>
+              Import
+            </button>
+          </div>
+          <p id="uploadMessage" class="text-muted mt-2.5 min-h-4 text-xs" role="status"></p>
+        </section>
+
+        <section
+          id="playlistSection"
+          class="card mt-3 hidden flex-col gap-3 p-4 animate-enter"
+          aria-label="Playlist View"
+        >
+          <div class="flex items-start gap-3.5">
+            <img
+              id="playlistCover"
+              src=""
+              alt=""
+              class="size-16 rounded-lg object-cover bg-edge shrink-0 hidden"
+            />
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <h2 id="playlistTitle" class="text-base font-semibold truncate text-fg"></h2>
+                <span id="playlistBadge" class="pill"></span>
+                <span id="playlistCount" class="text-xs text-muted"></span>
+              </div>
+              <p id="playlistDesc" class="text-muted text-xs truncate mt-1 hidden"></p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button id="playlistDownloadAll" class="btn btn-primary text-xs py-1 px-2.5">
+                Download all
+              </button>
+              <button
+                id="playlistClose"
+                class="btn btn-icon"
+                title="Close playlist view"
+                aria-label="Close"
+              >
+                <svg class="icon" viewBox="0 0 24 24">
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div
+            id="playlistTracks"
+            class="mt-1 max-h-80 overflow-y-auto divide-y divide-edge/60 pr-1 flex flex-col gap-0.5"
+          ></div>
+        </section>
+
+        <section class="card mt-3 flex flex-col gap-3 p-3.5" aria-label="Compression">
+          <div id="profileTabs" class="border-edge bg-ink flex gap-[3px] rounded-lg border p-[3px]">
+            <button class="tab" data-profile="auto">Auto<small>Recommended</small></button>
+            <button class="tab" data-profile="best">Best quality<small>VBR ~V0</small></button>
+            <button class="tab" data-profile="balanced">Balanced<small>192 kbps</small></button>
+            <button class="tab" data-profile="small">Smallest<small>96 kbps</small></button>
+            <button class="tab" data-profile="custom">Custom<small>Advanced</small></button>
+          </div>
+          <p id="autoHint" class="text-muted text-xs">
+            Picks the smallest size that still sounds great for each file. No settings needed.
+          </p>
+          <div id="advanced" class="hidden">
+            <div class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-2.5">
+              <label class="field-label">
+                Format
+                <select id="format" class="field">
+                  <option value="mp3">MP3</option>
+                  <option value="m4a">M4A (AAC)</option>
+                  <option value="opus">Opus</option>
+                  <option value="ogg">OGG Vorbis</option>
+                </select>
+              </label>
+              <label class="field-label">
+                Bitrate
+                <select id="bitrate" class="field">
+                  <option>320</option>
+                  <option>256</option>
+                  <option selected>192</option>
+                  <option>160</option>
+                  <option>128</option>
+                  <option>96</option>
+                </select>
+              </label>
+              <label class="field-label">
+                Sample rate
+                <select id="sampleRate" class="field">
+                  <option value="0">Keep original</option>
+                  <option value="48000">48 kHz</option>
+                  <option value="44100">44.1 kHz</option>
+                  <option value="32000">32 kHz</option>
+                  <option value="22050">22.05 kHz</option>
+                </select>
+              </label>
+              <label class="field-label">
+                Channels
+                <select id="channels" class="field">
+                  <option value="0">Keep original</option>
+                  <option value="2">Stereo</option>
+                  <option value="1">Mono</option>
+                </select>
+              </label>
+            </div>
+            <label class="check mt-3">
+              <input type="checkbox" id="vbr" />
+              Variable bitrate (not available for M4A)
+            </label>
+          </div>
+          <label class="check">
+            <input type="checkbox" id="hostToggle" />
+            <span
+              >Temporary direct link
+              <span class="text-muted text-xs"
+                >(plays in browsers, deleted after <span data-ttl>1 hour</span>)</span
+              ></span
+            >
+          </label>
+        </section>
+
+        <div class="mt-6 mb-2.5 flex flex-wrap items-center gap-2">
+          <h2 class="text-[15px] font-semibold">Queue</h2>
+          <span id="queueCount" class="text-muted text-xs"></span>
+          <div class="flex-1"></div>
+          <button id="zipBtn" class="btn" disabled>
+            <svg class="icon" viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+            </svg>
+            Download ZIP
+          </button>
+          <button id="clearBtn" class="btn" disabled>
+            <svg class="icon" viewBox="0 0 24 24">
+              <path
+                d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
+              />
+            </svg>
+            Clear finished
+          </button>
+        </div>
+        <div id="batchBar" class="bar mb-3" hidden><i></i></div>
+        <div id="queueList" class="flex flex-col gap-2"></div>
+        <p
+          id="emptyState"
+          class="border-edge text-muted rounded-xl border border-dashed py-7 text-center text-sm"
+        >
+          Nothing here yet.
+        </p>
+
+        <section id="notes" class="text-muted mt-9 text-[13px]">
+          <h2 class="text-fg mb-2 text-[15px] font-semibold">Notes</h2>
+          <ul class="list-disc space-y-1 pl-5">
+            <li>
+              Compressing a lossy file never restores lost quality. AlphaMe won't raise the bitrate
+              of an existing MP3 and keeps the original when it already fits.
+            </li>
+            <li>
+              YouTube and YouTube Music links work for public and unlisted videos and playlists.
+            </li>
+            <li>
+              Results and links are deleted <span data-ttl>1 hour</span> after processing. Nothing
+              is stored permanently.
+            </li>
+            <li id="limitsNote"></li>
+          </ul>
+        </section>
+      </div>
+    </main>
+
+    <footer class="border-edge text-muted border-t py-4 text-xs">
+      <div class="mx-auto flex w-full max-w-3xl flex-wrap justify-between gap-2 px-4">
+        <span
+          >Created by paragon506 —
+          <a
+            class="hover:text-fg underline"
+            href="https://github.com/paragon506"
+            target="_blank"
+            rel="noopener"
+            >github.com/paragon506</a
+          ></span
+        >
+        <span>Independent project, not officially affiliated.</span>
+      </div>
+    </footer>
+
+    <div
+      id="toast"
+      role="status"
+      class="border-edge-strong bg-raised pointer-events-none fixed bottom-6 left-1/2 max-w-[92vw] -translate-x-1/2 translate-y-5 rounded-lg border px-3.5 py-2 text-[13px] opacity-0 transition data-[show=true]:translate-y-0 data-[show=true]:opacity-100"
+    ></div>
+
+    <template id="rowTemplate">
+      <article class="card animate-enter px-3.5 py-3">
+        <div class="flex items-center gap-2.5">
+          <div class="min-w-0 flex-1">
+            <div data-role="title" class="truncate font-medium"></div>
+            <div data-role="sub" class="text-muted truncate text-xs"></div>
+          </div>
+          <span data-role="pill" class="pill"></span>
+          <div data-role="actions" class="flex gap-1.5"></div>
+        </div>
+        <div data-role="bar" class="bar mt-2.5"><i></i></div>
+        <div
+          data-role="result"
+          class="mt-2.5 hidden flex-wrap items-center gap-x-4 gap-y-2 text-[13px]"
+        >
+          <span data-role="sizes" class="text-muted"></span>
+          <b data-role="saved" class="text-accent font-semibold"></b>
+          <span data-role="meta" class="text-muted"></span>
+          <audio data-role="player" controls preload="none" class="h-9 w-full"></audio>
+        </div>
+        <form
+          data-role="editor"
+          class="border-edge mt-3 hidden grid-cols-1 gap-2.5 border-t pt-3 sm:grid-cols-2"
+        >
+          <label class="field-label sm:col-span-2"
+            >Title<input name="title" maxlength="200" class="field"
+          /></label>
+          <label class="field-label"
+            >Artist<input name="artist" maxlength="200" class="field"
+          /></label>
+          <label class="field-label"
+            >Album<input name="album" maxlength="200" class="field"
+          /></label>
+          <label class="field-label"
+            >Year<input name="year" inputmode="numeric" maxlength="4" pattern="\d{4}" class="field"
+          /></label>
+          <label class="field-label"
+            >Genre<input name="genre" maxlength="200" class="field"
+          /></label>
+          <div class="flex flex-wrap items-center gap-2 sm:col-span-2">
+            <button type="submit" class="btn btn-primary">Save tags</button>
+            <button type="button" data-role="cancelEdit" class="btn">Cancel</button>
+            <span class="text-muted text-xs">Cover art is kept. The audio is not re-encoded.</span>
+          </div>
+        </form>
+        <p data-role="error" class="text-danger mt-2 hidden text-[13px]"></p>
+      </article>
+    </template>
+  </body>
+</html>

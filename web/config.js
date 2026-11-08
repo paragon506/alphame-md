@@ -1,0 +1,1 @@
+window.ALPHAME_API = '';

@@ -1,0 +1,103 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-ink: #0e0f11;
+  --color-panel: #151618;
+  --color-raised: #1d1e21;
+  --color-edge: #25272b;
+  --color-edge-strong: #34363b;
+  --color-fg: #e7e8ea;
+  --color-muted: #8b8f96;
+  --color-accent: #7dd3a8;
+  --color-accent-soft: #93e0b9;
+  --color-accent-deep: #0e2a1f;
+  --color-danger: #f08a8a;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --animate-slide: slide 1.1s ease-in-out infinite;
+  --animate-enter: enter 0.2s ease-out;
+
+  @keyframes slide {
+    0% {
+      margin-left: -35%;
+    }
+    100% {
+      margin-left: 100%;
+    }
+  }
+
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-ink);
+  }
+  body {
+    @apply bg-ink text-fg font-sans text-[15px] leading-snug antialiased;
+  }
+  svg.icon {
+    @apply size-4 shrink-0 fill-none stroke-current stroke-2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+@layer components {
+  .card {
+    @apply border-edge bg-panel rounded-xl border;
+  }
+  .btn {
+    @apply border-edge bg-panel hover:border-edge-strong hover:bg-raised inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm transition-colors disabled:pointer-events-none disabled:opacity-40;
+  }
+  .btn-primary {
+    @apply border-accent bg-accent hover:bg-accent-soft font-semibold text-[#07140e];
+  }
+  .btn-icon {
+    @apply size-8 justify-center p-0;
+  }
+  .field {
+    @apply border-edge bg-ink focus:border-accent/50 rounded-lg border px-3 py-2 text-sm outline-none;
+  }
+  .field-label {
+    @apply text-muted flex flex-col gap-1 text-xs;
+  }
+  .check {
+    @apply flex cursor-pointer items-center gap-2 text-sm select-none;
+  }
+  .check input {
+    @apply accent-accent size-4;
+  }
+  .tab {
+    @apply text-muted hover:text-fg aria-pressed:bg-raised aria-pressed:text-fg aria-pressed:ring-edge-strong flex-1 cursor-pointer rounded-md px-1.5 py-1.5 text-sm transition-colors aria-pressed:ring-1;
+  }
+  .tab small {
+    @apply block text-[11px] opacity-70 max-sm:hidden;
+  }
+  .nav-link {
+    @apply text-muted hover:bg-raised hover:text-fg rounded-md px-2.5 py-1.5 text-sm;
+  }
+  .pill {
+    @apply border-edge text-muted rounded-full border px-2 py-0.5 text-xs whitespace-nowrap;
+  }
+  .pill[data-status='done'] {
+    @apply border-accent/40 bg-accent-deep text-accent;
+  }
+  .pill[data-status='error'] {
+    @apply border-danger/40 text-danger;
+  }
+  .bar {
+    @apply bg-edge h-[3px] overflow-hidden rounded-full;
+  }
+  .bar > i {
+    @apply bg-accent block h-full w-0 transition-[width] duration-500;
+  }
+  .bar[data-indeterminate='true'] > i {
+    @apply animate-slide w-[35%];
+  }
+}

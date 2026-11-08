@@ -1,0 +1,31 @@
+{
+  "name": "alphame",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Compress, batch-process and temporarily host audio files.",
+  "scripts": {
+    "build": "node scripts/build.js && npm run build:css",
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node scripts/test.js",
+    "test:spotify": "node scripts/test_spotify.js",
+    "format": "prettier --write src scripts web package.json",
+    "build:css": "tailwindcss -i web/styles.css -o public/assets/styles.css --minify",
+    "check": "node scripts/check.js",
+    "prestart": "node scripts/ensure-build.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.5",
+    "prettier": "^3.9.10",
+    "tailwindcss": "^4.3.5"
+  }
+}
