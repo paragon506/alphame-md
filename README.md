@@ -17,7 +17,7 @@
 - **Import YouTube playlists and links** via yt-dlp
 - **Upload local audio files** (MP3, FLAC, WAV, M4A, OGG, Opus…) and re-encode them
 - **Compression profiles**: Auto, Best (320k VBR), Balanced (192k), Compact (128k), Custom
-- **Minimum 128 kbps floor** — quality never tanks regardless of profile or source
+- **Configurable minimum bitrate floor** (64, 96, 128, 160 kbps) — prevents low-bitrate sources (like 48 kbps AAC) from needlessly inflating into oversized MP3 files
 - **Recompress** any finished job with different settings
 - **Tag editor** — edit title, artist, album, year, genre without re-encoding
 - **Download individually** or as a **ZIP**
@@ -179,7 +179,8 @@ public/              built frontend (git-ignored)
 
 ## Notes
 
-- **Spotify support** is metadata-only — playlists are read without authentication via public scraping. Each track is resolved to YouTube Music. Private playlists and Spotify albums are not supported.
+- **Spotify support** is metadata-only — Spotify audio is protected by DRM and cannot be downloaded directly. Instead, track metadata (title and artist) is scraped and matched against official YouTube Music studio releases (ATV tracks).
+- **Bitrates & AAC vs MP3**: Streaming sources frequently deliver audio in AAC (e.g. 48–128 kbps) or Opus. AAC at 48 kbps is perceptually equivalent to ~64–80 kbps MP3 due to higher codec efficiency. Re-encoding 48 kbps AAC to a forced 128 kbps MP3 roughly triples bitrate and inflates file size (~1.5 MB → ~4 MB) without audio quality gains. AlphaMe includes a configurable minimum bitrate floor (64, 96, 128, 160 kbps in Preferences) so you can keep files compact or adhere to standard floors.
 - **YouTube** downloading depends on yt-dlp and may require cookies on hosted environments.
 - **Temporary links** are served from the app process's own disk — no third-party storage. They expire with the job TTL or on redeploy.
 - Make sure you have the right to download and re-encode any content you process.

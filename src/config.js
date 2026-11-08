@@ -6,7 +6,7 @@ export const PORT = +env('PORT', 3000);
 export const WORK = path.resolve(env('WORK_DIR', path.join(os.tmpdir(), 'alphame')));
 export const TTL_MS = +env('TTL_MINUTES', 60) * 60_000;
 export const MAX_BYTES = +env('MAX_FILE_MB', 200) * 1024 * 1024;
-export const CONCURRENCY = Math.max(1, +env('CONCURRENCY', 2));
+export const CONCURRENCY = Math.max(1, +env('CONCURRENCY', 3));
 export const MAX_JOBS = +env('MAX_JOBS', 10000);
 export const MAX_PLAYLIST = +env('MAX_PLAYLIST_ITEMS', 0);
 export const YTDLP = env('YTDLP_PATH', 'yt-dlp');
@@ -43,4 +43,4 @@ export const PROFILES = {
   balanced: { format: 'mp3', bitrate: 192, vbr: false },
   small: { format: 'mp3', bitrate: 128, vbr: false, channels: 2 },
 };
-export const STD_BR = [320, 256, 192, 160, 128];
+export const STD_BR = [320, 256, 192, 160, 128, 96, 64];

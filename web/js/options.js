@@ -16,12 +16,14 @@ function applyProfile(next) {
 
 export function getOptions() {
   const format = $('#format').value;
+  const minFloor = Number(localStorage.getItem('alphame-min-floor') || 128);
   const rawBr = parseInt($('#bitrate').value, 10);
-  const bitrate = Number.isFinite(rawBr) ? Math.max(128, Math.min(320, rawBr)) : 192;
+  const bitrate = Number.isFinite(rawBr) ? Math.max(minFloor, Math.min(320, rawBr)) : 192;
   return {
     profile,
     format,
     bitrate,
+    minBitrate: minFloor,
     sampleRate: Number($('#sampleRate').value),
     channels: Number($('#channels').value),
     vbr: $('#vbr').checked && format !== 'm4a',
@@ -33,12 +35,31 @@ export function initOptions() {
   const defaultProfile = $('#defaultProfile');
   const defaultHost = $('#defaultHost');
   const defaultFormat = $('#defaultFormat');
+  const settingMinFloor = $('#settingMinFloor');
   const panel = $('#settingsPanel');
   const toggle = $('#settingsToggle');
 
   defaultProfile.value = profile === 'custom' ? DEFAULT_PROFILE : profile;
   defaultHost.checked = localStorage.getItem(STORAGE.host) === '1';
   $('#hostToggle').checked = defaultHost.checked;
+
+  if (settingMinFloor) {
+    const savedFloor = localStorage.getItem('alphame-min-floor') || '128';
+    settingMinFloor.value = savedFloor;
+    const updateFloorLabels = (val) => {
+      const noteLabel = $('#floorNoteLabel');
+      if (noteLabel) noteLabel.textContent = `${val} kbps`;
+      const autoHint = $('#autoHint');
+      if (autoHint) {
+        autoHint.textContent = `Picks the best quality per file. Never drops below ${val} kbps floor.`;
+      }
+    };
+    updateFloorLabels(savedFloor);
+    settingMinFloor.addEventListener('change', () => {
+      localStorage.setItem('alphame-min-floor', settingMinFloor.value);
+      updateFloorLabels(settingMinFloor.value);
+    });
+  }
 
   if (defaultFormat) {
     const savedFormat = localStorage.getItem('alphame-format') || 'mp3';
@@ -73,8 +94,9 @@ export function initOptions() {
   // Clamp bitrate input on change/blur
   const bitrateInput = $('#bitrate');
   const clampBitrate = () => {
+    const minFloor = Number(localStorage.getItem('alphame-min-floor') || 64);
     let v = parseInt(bitrateInput.value, 10);
-    if (!Number.isFinite(v) || v < 128) v = 128;
+    if (!Number.isFinite(v) || v < minFloor) v = minFloor;
     if (v > 320) v = 320;
     bitrateInput.value = v;
     applyProfile('custom');

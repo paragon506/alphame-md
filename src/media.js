@@ -41,11 +41,21 @@ export const vbrQ = (br, table) => (table.find(([min]) => br >= min) || [0, tabl
 
 export function normalizeOpts(o = {}) {
   const base = PROFILES[o.profile] || {};
-  const m = { format: 'mp3', bitrate: 192, vbr: false, sampleRate: 0, channels: 0, ...base };
+  const rawMinBr = +o.minBitrate;
+  const minBitrate = Number.isFinite(rawMinBr) ? Math.max(64, Math.min(320, rawMinBr)) : 128;
+  const m = {
+    format: 'mp3',
+    bitrate: 192,
+    vbr: false,
+    sampleRate: 0,
+    channels: 0,
+    minBitrate,
+    ...base,
+  };
   if (o.profile === 'custom' || !PROFILES[o.profile]) {
     if (FORMATS[o.format]) m.format = o.format;
     const rawBr = +o.bitrate;
-    m.bitrate = Number.isFinite(rawBr) ? Math.max(128, Math.min(320, rawBr)) : 192;
+    m.bitrate = Number.isFinite(rawBr) ? Math.max(minBitrate, Math.min(320, rawBr)) : 192;
     m.vbr = !!o.vbr;
     m.sampleRate = [0, 22050, 32000, 44100, 48000].includes(+o.sampleRate) ? +o.sampleRate : 0;
     m.channels = [0, 1, 2].includes(+o.channels) ? +o.channels : 0;
@@ -85,26 +95,32 @@ export function runFfmpeg(job, args, dur) {
     });
   });
 }
-export function autoTarget(info) {
-  if (!LOSSY.has(info.codec)) return { format: 'mp3', bitrate: 192, vbr: true };
+export function autoTarget(info, minFloor = 128) {
+  if (!LOSSY.has(info.codec)) return { format: 'mp3', bitrate: Math.max(minFloor, 192), vbr: true };
   const b = info.br || 192;
-  const t = b >= 300 ? 192 : b >= 224 ? 160 : 128;
+  let t;
+  if (b >= 300) t = 192;
+  else if (b >= 224) t = 160;
+  else if (b >= 160) t = 128;
+  else if (b >= 96) t = Math.max(minFloor, 96);
+  else t = Math.max(minFloor, 64);
   return {
     format: 'mp3',
-    bitrate: Math.min(t, 320),
+    bitrate: Math.min(Math.max(t, minFloor), 320),
     vbr: false,
-    keep: info.codec === 'mp3' && b <= 128,
+    keep: info.codec === 'mp3' && b <= minFloor,
   };
 }
 
 export async function encode(job, src, info) {
-  const o = job.opts.auto ? { ...job.opts, ...autoTarget(info) } : job.opts,
+  const minFloor = job.opts.minBitrate || 128;
+  const o = job.opts.auto ? { ...job.opts, ...autoTarget(info, minFloor) } : job.opts,
     fm = FORMATS[o.format];
   const out = path.join(WORK, `${job.id}.out.${fm.ext}`);
   const lossySrc = LOSSY.has(info.codec);
-  let br = Math.max(o.bitrate, 128);
+  let br = Math.max(o.bitrate, minFloor);
   if (lossySrc && info.br)
-    br = Math.max(128, Math.min(br, STD_BR.find((s) => s <= info.br + 8) || STD_BR.at(-1)));
+    br = Math.max(minFloor, Math.min(br, STD_BR.find((s) => s <= info.br + 8) || STD_BR.at(-1)));
   const sameCodec = info.codec === 'mp3' && o.format === 'mp3';
   const alreadyOk =
     sameCodec &&
