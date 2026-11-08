@@ -44,7 +44,9 @@ export function normalizeOpts(o = {}) {
   const m = { format: 'mp3', bitrate: 192, vbr: false, sampleRate: 0, channels: 0, ...base };
   if (o.profile === 'custom' || !PROFILES[o.profile]) {
     if (FORMATS[o.format]) m.format = o.format;
-    m.bitrate = STD_BR.includes(+o.bitrate) ? +o.bitrate : 192;
+    // Accept any bitrate >= 128 from the user (not just STD_BR), clamp to [128, 320]
+    const rawBr = +o.bitrate;
+    m.bitrate = Number.isFinite(rawBr) ? Math.max(128, Math.min(320, rawBr)) : 192;
     m.vbr = !!o.vbr;
     m.sampleRate = [0, 22050, 32000, 44100, 48000].includes(+o.sampleRate) ? +o.sampleRate : 0;
     m.channels = [0, 1, 2].includes(+o.channels) ? +o.channels : 0;
@@ -87,12 +89,13 @@ export function runFfmpeg(job, args, dur) {
 export function autoTarget(info) {
   if (!LOSSY.has(info.codec)) return { format: 'mp3', bitrate: 192, vbr: true };
   const b = info.br || 192;
-  const t = b >= 300 ? 192 : b >= 224 ? 160 : b >= 176 ? 128 : b;
+  // Never go below 128 kbps even for auto
+  const t = b >= 300 ? 192 : b >= 224 ? 160 : 128;
   return {
     format: 'mp3',
     bitrate: Math.min(t, 320),
     vbr: false,
-    keep: info.codec === 'mp3' && b < 176,
+    keep: info.codec === 'mp3' && b <= 128,
   };
 }
 
@@ -101,8 +104,10 @@ export async function encode(job, src, info) {
     fm = FORMATS[o.format];
   const out = path.join(WORK, `${job.id}.out.${fm.ext}`);
   const lossySrc = LOSSY.has(info.codec);
-  let br = o.bitrate;
-  if (lossySrc && info.br) br = Math.min(br, STD_BR.find((s) => s <= info.br + 8) || STD_BR.at(-1));
+  // Enforce minimum 128 kbps always
+  let br = Math.max(o.bitrate, 128);
+  // For lossy sources don't upscale beyond the source bitrate (but keep minimum)
+  if (lossySrc && info.br) br = Math.max(128, Math.min(br, STD_BR.find((s) => s <= info.br + 8) || STD_BR.at(-1)));
   const sameCodec = info.codec === 'mp3' && o.format === 'mp3';
   const alreadyOk =
     sameCodec &&

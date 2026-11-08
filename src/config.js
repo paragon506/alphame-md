@@ -30,31 +30,21 @@ export const ALLOW_PRIVATE = env('ALLOW_PRIVATE_URLS', 'false') === 'true';
 export const CORS_ORIGIN = env('CORS_ORIGIN', '');
 export const PUBLIC_URL = env('PUBLIC_URL', '').replace(/\/$/, '');
 export const AUDIO_EXT = new Set([
-  '.mp3',
-  '.m4a',
-  '.aac',
-  '.wav',
-  '.flac',
-  '.ogg',
-  '.oga',
-  '.opus',
-  '.wma',
-  '.aiff',
-  '.aif',
-  '.mp4',
-  '.webm',
-  '.weba',
+  '.mp3', '.m4a', '.aac', '.wav', '.flac', '.ogg', '.oga',
+  '.opus', '.wma', '.aiff', '.aif', '.mp4', '.webm', '.weba',
 ]);
 export const FORMATS = {
-  mp3: { ext: 'mp3', mime: 'audio/mpeg' },
-  m4a: { ext: 'm4a', mime: 'audio/mp4' },
-  opus: { ext: 'opus', mime: 'audio/ogg' },
-  ogg: { ext: 'ogg', mime: 'audio/ogg' },
+  mp3:  { ext: 'mp3',  mime: 'audio/mpeg' },
+  m4a:  { ext: 'm4a',  mime: 'audio/mp4'  },
+  opus: { ext: 'opus', mime: 'audio/ogg'  },
+  ogg:  { ext: 'ogg',  mime: 'audio/ogg'  },
 };
 export const PROFILES = {
-  auto: { format: 'mp3', bitrate: 192, vbr: false, auto: true },
-  best: { format: 'mp3', bitrate: 320, vbr: true },
+  auto:     { format: 'mp3', bitrate: 192, vbr: false, auto: true },
+  best:     { format: 'mp3', bitrate: 320, vbr: true },
   balanced: { format: 'mp3', bitrate: 192, vbr: false },
-  small: { format: 'mp3', bitrate: 96, vbr: false, channels: 2 },
+  // raised from 96 → 128 kbps minimum
+  small:    { format: 'mp3', bitrate: 128, vbr: false, channels: 2 },
 };
-export const STD_BR = [320, 256, 192, 160, 128, 96, 64, 48, 32];
+// Allowed discrete bitrates — minimum is 128 kbps
+export const STD_BR = [320, 256, 192, 160, 128];

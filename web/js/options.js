@@ -10,16 +10,18 @@ function applyProfile(next) {
   document.querySelectorAll('#profileTabs [data-profile]').forEach((tab) => {
     tab.setAttribute('aria-pressed', String(tab.dataset.profile === next));
   });
-  show($('#advanced'), next === 'custom');
+  show($('#advanced'), next === 'custom', 'flex');
   show($('#autoHint'), next === 'auto');
 }
 
 export function getOptions() {
   const format = $('#format').value;
+  const rawBr = parseInt($('#bitrate').value, 10);
+  const bitrate = Number.isFinite(rawBr) ? Math.max(128, Math.min(320, rawBr)) : 192;
   return {
     profile,
     format,
-    bitrate: Number($('#bitrate').value),
+    bitrate,
     sampleRate: Number($('#sampleRate').value),
     channels: Number($('#channels').value),
     vbr: $('#vbr').checked && format !== 'm4a',
@@ -57,7 +59,19 @@ export function initOptions() {
     tab.addEventListener('click', () => applyProfile(tab.dataset.profile));
   });
 
-  ['format', 'bitrate', 'sampleRate', 'channels', 'vbr'].forEach((id) => {
+  // Clamp bitrate input on change/blur
+  const bitrateInput = $('#bitrate');
+  const clampBitrate = () => {
+    let v = parseInt(bitrateInput.value, 10);
+    if (!Number.isFinite(v) || v < 128) v = 128;
+    if (v > 320) v = 320;
+    bitrateInput.value = v;
+    applyProfile('custom');
+  };
+  bitrateInput.addEventListener('change', clampBitrate);
+  bitrateInput.addEventListener('blur', clampBitrate);
+
+  ['format', 'sampleRate', 'channels', 'vbr'].forEach((id) => {
     $(`#${id}`).addEventListener('change', () => {
       if (id === 'format' && $('#format').value === 'm4a') $('#vbr').checked = false;
       applyProfile('custom');

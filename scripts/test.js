@@ -161,8 +161,8 @@ try {
     JSON.stringify(jobs),
   );
   pass('all jobs completed');
-  assert(by('big').newSize < by('big').origSize * 0.4);
-  pass(`320k → 96k: ${by('big').origSize} → ${by('big').newSize} bytes`);
+  assert(by('big').newSize < by('big').origSize * 0.6);
+  pass(`320k → 128k: ${by('big').origSize} → ${by('big').newSize} bytes`);
   assert.equal(by('big').title, 'Test Tone');
   pass('ID3 title read');
   {
@@ -216,9 +216,9 @@ try {
       `${dir}/out.mp3`,
     ]),
   );
-  assert.equal(Math.round(pr.format.bit_rate / 1000 / 8) * 8 <= 104, true);
+  assert.equal(Math.round(pr.format.bit_rate / 1000 / 8) * 8 <= 136, true);
   assert(pr.streams.some((s) => s.codec_type === 'video') && pr.format.tags.title === 'Test Tone');
-  pass('output is ~96k with cover + ID3 preserved');
+  pass('output is ~128k with cover + ID3 preserved');
   const zip = await fetch(`${B}/api/zip?c=${C}`);
   const zb = Buffer.from(await zip.arrayBuffer());
   assert(

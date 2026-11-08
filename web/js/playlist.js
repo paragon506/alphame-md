@@ -30,6 +30,80 @@ let currentPlaylist = null;
 let currentOnDownloadCallback = null;
 let renderedTrackElements = [];
 
+// ── Download history ──────────────────────────────────────────────────────────
+const HISTORY_KEY = 'alphame-dl-history';
+const HISTORY_MAX = 2000;
+
+function historyLoad() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'));
+  } catch {
+    return new Set();
+  }
+}
+
+function historySave(set) {
+  try {
+    const arr = [...set].slice(-HISTORY_MAX);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(arr));
+  } catch {}
+}
+
+function historyKey(track) {
+  return `${(track.title || '').toLowerCase().trim()}|||${(track.artist || '').toLowerCase().trim()}`;
+}
+
+export function markDownloaded(track) {
+  const set = historyLoad();
+  set.add(historyKey(track));
+  historySave(set);
+}
+
+export function wasDownloaded(track) {
+  return historyLoad().has(historyKey(track));
+}
+
+export function clearHistory() {
+  localStorage.removeItem(HISTORY_KEY);
+}
+
+// ── Download history ──────────────────────────────────────────────────────────
+const HISTORY_KEY = 'alphame-dl-history';
+const HISTORY_MAX = 2000;
+
+function historyLoad() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'));
+  } catch {
+    return new Set();
+  }
+}
+
+function historySave(set) {
+  try {
+    const arr = [...set].slice(-HISTORY_MAX);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(arr));
+  } catch {}
+}
+
+function historyKey(track) {
+  return `${(track.title || '').toLowerCase().trim()}|||${(track.artist || '').toLowerCase().trim()}`;
+}
+
+export function markDownloaded(track) {
+  const set = historyLoad();
+  set.add(historyKey(track));
+  historySave(set);
+}
+
+export function wasDownloaded(track) {
+  return historyLoad().has(historyKey(track));
+}
+
+export function clearHistory() {
+  localStorage.removeItem(HISTORY_KEY);
+}
+
 function renderTrackItem(track, getOptions, onQueued) {
   const item = document.createElement('div');
   item.className =
@@ -56,14 +130,26 @@ function renderTrackItem(track, getOptions, onQueued) {
   `;
 
   const btn = item.querySelector('.dl-btn');
+
+  // Mark as already downloaded if in history
+  if (wasDownloaded(track)) {
+    btn.disabled = true;
+    btn.innerHTML = icon('check');
+    btn.classList.add('text-accent');
+    btn.title = 'Already downloaded';
+    item.classList.add('opacity-60');
+  }
+
   btn.addEventListener('click', async () => {
     btn.disabled = true;
     btn.innerHTML = `<span class="size-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin inline-block"></span>`;
     try {
       await downloadTrack(track, getOptions());
+      markDownloaded(track);
       btn.innerHTML = icon('check');
       btn.classList.add('text-accent');
       btn.title = 'Queued';
+      item.classList.add('opacity-60');
       notify(`Queued: ${track.title}`);
       if (typeof onQueued === 'function') onQueued();
     } catch (err) {
@@ -111,6 +197,8 @@ export function initPlaylistUI({ getOptions, onQueued }) {
 
     try {
       await downloadTracks(currentPlaylist.tracks, getOptions());
+      // Mark all tracks in download history
+      currentPlaylist.tracks.forEach(markDownloaded);
       notify(`Added ${currentPlaylist.tracks.length} tracks to queue`);
       downloadAllBtn.textContent = 'All queued';
 
@@ -120,6 +208,7 @@ export function initPlaylistUI({ getOptions, onQueued }) {
         b.innerHTML = icon('check');
         b.classList.add('text-accent');
       });
+      renderedTrackElements.forEach((el) => el.classList.add('opacity-60'));
 
       if (typeof currentOnDownloadCallback === 'function') currentOnDownloadCallback();
     } catch (err) {
