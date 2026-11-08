@@ -46,6 +46,7 @@ function createRow() {
   const part = (role) => $(`[data-role="${role}"]`, element);
   return {
     element,
+    cover: part('cover'),
     title: part('title'),
     sub: part('sub'),
     pill: part('pill'),
@@ -62,6 +63,7 @@ function createRow() {
     actionsKey: '',
     playerReady: false,
     editorBound: false,
+    coverSet: false,
   };
 }
 
@@ -199,6 +201,17 @@ function updateRow(row, job, refresh) {
   row.sub.textContent = [job.filename, job.duration && formatDuration(job.duration), job.srcInfo]
     .filter(Boolean)
     .join(' · ');
+
+  // cover art
+  if (row.cover && !row.coverSet && job.cover) {
+    const img = document.createElement('img');
+    img.src = job.cover;
+    img.alt = '';
+    img.className = 'w-full h-full object-cover';
+    img.onerror = () => {};
+    row.cover.replaceChildren(img);
+    row.coverSet = true;
+  }
 
   const label = LABELS[job.status];
   row.pill.dataset.status = job.status;

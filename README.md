@@ -1,11 +1,10 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/paragon506/samp-ytm/main/web/icon.svg" width="64" alt="AlphaMe" />
   <h1>AlphaMe</h1>
-  <p>Download, convert, and compress audio. Search YouTube Music, import Spotify playlists, upload files.</p>
+  <p>Download and compress audio from YouTube Music, Spotify playlists, and direct links.</p>
   <p>
-    <img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen" alt="Node.js ≥20" />
-    <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT" />
-    <img src="https://img.shields.io/badge/deploy-Railway-blueviolet" alt="Railway" />
+    <img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen?style=flat-square" alt="Node.js ≥20" />
+    <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT" />
+    <img src="https://img.shields.io/badge/deploy-Railway-blueviolet?style=flat-square" alt="Railway" />
   </p>
 </div>
 

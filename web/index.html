@@ -3,345 +3,309 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#090a0d" />
-    <title>AlphaMe · a free music downloader</title>
+    <meta name="theme-color" content="#07080b" />
+    <meta name="description" content="Download and compress audio from YouTube Music, Spotify playlists, and direct links." />
+    <title>AlphaMe</title>
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111317'/%3E%3Cpath d='M6 16h2M11 11v10M16 6v20M21 11v10M26 14v4' stroke='%2310b981' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230f1115'/%3E%3Cpath d='M5 16h3M11 11v10M17 7v18M22 12v8M27 14v4' stroke='%2310b981' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E"
     />
     <link rel="stylesheet" href="assets/styles.css" />
     <script src="config.js"></script>
     <script type="module" src="js/main.js"></script>
   </head>
-  <body class="flex min-h-screen flex-col bg-ink text-fg antialiased">
-    <header class="border-edge border-b bg-panel/80 backdrop-blur sticky top-0 z-30">
-      <div class="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <div
-          class="flex items-center gap-2.5 font-bold tracking-tight text-base cursor-pointer select-none group"
-          onclick="window.scrollTo({top:0, behavior:'smooth'})"
-          role="button"
-          tabindex="0"
+
+  <body class="flex min-h-screen flex-col">
+
+    <!-- header -->
+    <header class="border-b border-edge/60 bg-panel/70 backdrop-blur-md sticky top-0 z-30">
+      <div class="mx-auto flex h-13 w-full max-w-7xl items-center justify-between gap-4 px-5 lg:px-8">
+
+        <!-- logo -->
+        <button
+          class="flex items-center gap-2 cursor-pointer select-none group outline-none"
+          onclick="window.scrollTo({top:0,behavior:'smooth'})"
+          aria-label="AlphaMe"
         >
-          <div
-            class="size-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-accent shadow-sm group-hover:border-emerald-500/60 transition-all"
-          >
-            <svg class="icon size-4.5" viewBox="0 0 24 24">
-              <path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4" />
+          <div class="relative size-7 shrink-0">
+            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-7">
+              <rect width="28" height="28" rx="8" fill="#0f1115"/>
+              <rect width="28" height="28" rx="8" fill="url(#lg)" fill-opacity="0.06"/>
+              <path d="M4 14h2.5M9 10v8M14 6.5v15M18.5 10v8M23 12.5v3" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="lg" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#10b981"/>
+                  <stop offset="1" stop-color="#06b6d4"/>
+                </linearGradient>
+              </defs>
             </svg>
           </div>
-          <span class="font-bold text-fg tracking-tight text-base">AlphaMe</span>
-        </div>
+          <span class="text-fg font-semibold text-[15px] tracking-tight group-hover:text-accent transition-colors">AlphaMe</span>
+        </button>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2.5">
+          <!-- server status -->
           <div
-            class="flex items-center gap-2 text-xs border border-edge bg-raised/60 px-2.5 py-1 rounded-full text-muted"
-            title="Server connection"
+            class="flex items-center gap-1.5 border border-edge/60 bg-raised/40 px-2.5 py-1 rounded-full cursor-default"
+            title="Server status"
           >
             <span
               id="statusDot"
-              class="size-2 rounded-full bg-neutral-600 data-[state=ok]:bg-accent data-[state=down]:bg-danger transition-colors"
+              class="size-1.5 rounded-full bg-muted/40 data-[state=ok]:bg-accent data-[state=down]:bg-danger transition-all"
             ></span>
-            <span id="statusText" class="font-medium text-[11px]">Connecting…</span>
+            <span id="statusText" class="text-muted font-medium" style="font-size:11px">Connecting</span>
           </div>
+
+          <!-- settings -->
           <button
             id="settingsToggle"
-            class="btn btn-icon"
+            class="btn btn-icon btn-ghost"
             aria-label="Settings"
-            title="Preferences & Settings"
+            title="Preferences"
             aria-expanded="false"
           >
             <svg class="icon" viewBox="0 0 24 24">
-              <path
-                d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.8l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7V20a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.8v-.5a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2z"
-              />
-              <circle cx="12" cy="12" r="3" />
+              <path d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.8l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7V20a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.8v-.5a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2z"/>
+              <circle cx="12" cy="12" r="3"/>
             </svg>
           </button>
         </div>
       </div>
     </header>
 
-    <main class="flex-1 py-6">
-      <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+    <main class="flex-1 py-5">
+      <div class="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-8">
+
+        <!-- preferences panel -->
         <section
           id="settingsPanel"
-          class="card mb-6 hidden flex-col gap-4 p-5 animate-enter border-accent/20 bg-panel"
-          aria-label="Settings"
+          class="card mb-5 hidden flex-col gap-4 p-5 animate-enter"
+          aria-label="Preferences"
         >
-          <div class="flex items-center justify-between border-b border-edge pb-2">
-            <h3 class="text-sm font-semibold text-fg">Preferences</h3>
-            <span class="text-xs text-muted">Auto-saved in browser</span>
+          <div class="flex items-center justify-between pb-3 border-b border-edge/60">
+            <span class="font-semibold text-fg text-sm">Preferences</span>
+            <span class="text-muted" style="font-size:11px">Saved in browser</span>
           </div>
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label class="field-label">
               Default Profile
-              <select id="defaultProfile" class="field">
-                <option value="auto">Auto — Best ratio (Min 128 kbps)</option>
-                <option value="best">Best Quality — 320 kbps VBR</option>
+              <select id="defaultProfile" class="field mt-1">
+                <option value="auto">Auto — Best ratio (min 128 kbps)</option>
+                <option value="best">Best — 320 kbps VBR</option>
                 <option value="balanced">Balanced — 192 kbps</option>
                 <option value="small">Compact — 128 kbps</option>
               </select>
             </label>
             <label class="field-label">
-              Temporary Direct Links
-              <label class="check mt-2">
+              Streaming Links
+              <label class="check mt-2.5 font-normal normal-case tracking-normal" style="font-size:12.5px">
                 <input type="checkbox" id="defaultHost" />
-                <span>Create streaming URL for each file</span>
+                <span>Generate public link per file</span>
               </label>
             </label>
           </div>
-          <p class="text-muted text-xs">
-            Files and streaming links automatically expire <span data-ttl>1 hour</span> after
-            processing.
+          <p class="text-muted" style="font-size:11.5px">
+            Files expire <span data-ttl>1 hour</span> after processing.
           </p>
         </section>
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          <div class="lg:col-span-8 flex flex-col gap-5">
-            <div class="flex items-center gap-2">
-              <div class="flex rounded-lg border border-edge bg-panel p-1 gap-1">
-                <button
-                  id="tabSearchMode"
-                  class="px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all bg-raised text-fg border border-edge-strong shadow-sm"
-                  onclick="
-                    document.getElementById('browserPanel').classList.remove('hidden');
-                    document.getElementById('dropzone').classList.add('hidden');
-                    this.className =
-                      'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all bg-raised text-fg border border-edge-strong shadow-sm';
-                    document.getElementById('tabImportMode').className =
-                      'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all text-muted hover:text-fg';
-                  "
-                >
-                  Search YouTube Music
-                </button>
-                <button
-                  id="tabImportMode"
-                  class="px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all text-muted hover:text-fg"
-                  onclick="
-                    document.getElementById('dropzone').classList.remove('hidden');
-                    document.getElementById('browserPanel').classList.add('hidden');
-                    this.className =
-                      'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all bg-raised text-fg border border-edge-strong shadow-sm';
-                    document.getElementById('tabSearchMode').className =
-                      'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all text-muted hover:text-fg';
-                  "
-                >
-                  Paste Links or Upload
-                </button>
-              </div>
+
+        <!-- main grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+          <!-- left column: search, import, queue -->
+          <div class="lg:col-span-8 flex flex-col gap-4">
+
+            <!-- tabs -->
+            <div class="flex items-center gap-1.5 p-1 bg-panel rounded-xl border border-edge/60 w-fit">
+              <button
+                id="tabSearchMode"
+                class="px-3.5 py-1.5 rounded-lg text-fg font-medium bg-raised border border-edge-strong shadow-sm cursor-pointer transition-all"
+                style="font-size:12px"
+                onclick="
+                  document.getElementById('browserPanel').classList.remove('hidden');
+                  document.getElementById('dropzone').classList.add('hidden');
+                  this.className = 'px-3.5 py-1.5 rounded-lg text-fg font-medium bg-raised border border-edge-strong shadow-sm cursor-pointer transition-all';
+                  document.getElementById('tabImportMode').className = 'px-3.5 py-1.5 rounded-lg text-muted hover:text-fg cursor-pointer transition-all';
+                "
+              >
+                Search YouTube Music
+              </button>
+              <button
+                id="tabImportMode"
+                class="px-3.5 py-1.5 rounded-lg text-muted hover:text-fg cursor-pointer transition-all"
+                style="font-size:12px"
+                onclick="
+                  document.getElementById('dropzone').classList.remove('hidden');
+                  document.getElementById('browserPanel').classList.add('hidden');
+                  this.className = 'px-3.5 py-1.5 rounded-lg text-fg font-medium bg-raised border border-edge-strong shadow-sm cursor-pointer transition-all';
+                  document.getElementById('tabSearchMode').className = 'px-3.5 py-1.5 rounded-lg text-muted hover:text-fg cursor-pointer transition-all';
+                "
+              >
+                Links &amp; Upload
+              </button>
             </div>
+
+            <!-- search browser panel -->
             <section
               id="browserPanel"
-              class="card p-5 flex flex-col gap-3.5 animate-enter"
+              class="card p-5 flex flex-col gap-4 animate-enter"
               aria-label="YouTube Music Search"
             >
-              <div class="flex flex-col gap-1">
-                <h2 class="text-base font-semibold text-fg">Search YouTube Music</h2>
-                <p class="text-muted text-xs">
-                  Finds official studio releases. No video intros, dialogue, or visualizers.
-                </p>
-              </div>
-
-              <div class="flex items-stretch gap-2 mt-1">
+              <!-- search bar -->
+              <div class="flex gap-2">
                 <div class="relative flex-1">
+                  <svg class="icon absolute left-3.5 top-1/2 -translate-y-1/2 text-muted/60 pointer-events-none" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                  </svg>
                   <input
                     id="browserInput"
                     type="text"
-                    class="field w-full pl-9 py-2.5 text-sm"
-                    placeholder="Search song, artist, or album (e.g. The Weeknd, Bohemian Rhapsody, Dua Lipa)…"
+                    class="field w-full pl-10 py-2.5 text-sm"
+                    placeholder="Artist, song or album…"
+                    autocomplete="off"
                   />
-                  <svg
-                    class="icon absolute left-3 top-3 text-muted pointer-events-none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.3-4.3" />
-                  </svg>
                 </div>
-                <button id="browserBtn" class="btn btn-primary px-4 py-2.5 font-medium shrink-0">
+                <button id="browserBtn" class="btn btn-primary px-5 shrink-0">
                   <svg class="icon" viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.3-4.3" />
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
                   </svg>
                   Search
                 </button>
               </div>
-              <div class="flex flex-wrap items-center gap-1.5 text-xs text-muted">
-                <span class="text-[11px] uppercase tracking-wider opacity-60">Popular:</span>
-                <button
-                  class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
-                  onclick="
-                    document.getElementById('browserInput').value = 'The Weeknd Blinding Lights';
-                    document.getElementById('browserBtn').click();
-                  "
-                >
-                  The Weeknd
-                </button>
-                <button
-                  class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
-                  onclick="
-                    document.getElementById('browserInput').value = 'Daft Punk';
-                    document.getElementById('browserBtn').click();
-                  "
-                >
-                  Daft Punk
-                </button>
-                <button
-                  class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
-                  onclick="
-                    document.getElementById('browserInput').value = 'Bad Bunny';
-                    document.getElementById('browserBtn').click();
-                  "
-                >
-                  Bad Bunny
-                </button>
-                <button
-                  class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
-                  onclick="
-                    document.getElementById('browserInput').value = 'Queen Bohemian Rhapsody';
-                    document.getElementById('browserBtn').click();
-                  "
-                >
-                  Queen
-                </button>
-                <button
-                  class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
-                  onclick="
-                    document.getElementById('browserInput').value = 'Dua Lipa';
-                    document.getElementById('browserBtn').click();
-                  "
-                >
-                  Dua Lipa
-                </button>
+
+              <!-- quick searches -->
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="section-label mr-1">Try</span>
+                <button class="pill cursor-pointer hover:border-edge-strong hover:text-fg transition-colors" onclick="document.getElementById('browserInput').value='The Weeknd';document.getElementById('browserBtn').click()">The Weeknd</button>
+                <button class="pill cursor-pointer hover:border-edge-strong hover:text-fg transition-colors" onclick="document.getElementById('browserInput').value='Daft Punk';document.getElementById('browserBtn').click()">Daft Punk</button>
+                <button class="pill cursor-pointer hover:border-edge-strong hover:text-fg transition-colors" onclick="document.getElementById('browserInput').value='Bad Bunny';document.getElementById('browserBtn').click()">Bad Bunny</button>
+                <button class="pill cursor-pointer hover:border-edge-strong hover:text-fg transition-colors" onclick="document.getElementById('browserInput').value='Queen';document.getElementById('browserBtn').click()">Queen</button>
+                <button class="pill cursor-pointer hover:border-edge-strong hover:text-fg transition-colors" onclick="document.getElementById('browserInput').value='Dua Lipa';document.getElementById('browserBtn').click()">Dua Lipa</button>
+                <button class="pill cursor-pointer hover:border-edge-strong hover:text-fg transition-colors" onclick="document.getElementById('browserInput').value='Kendrick Lamar';document.getElementById('browserBtn').click()">Kendrick Lamar</button>
               </div>
-              <p id="browserStatus" class="text-xs text-muted min-h-4 hidden"></p>
-              <div
-                id="browserResults"
-                class="flex flex-col gap-1 max-h-[440px] overflow-y-auto pr-1"
-              ></div>
+
+              <!-- status + results -->
+              <p id="browserStatus" class="text-muted hidden" style="font-size:12px"></p>
+              <div id="browserResults" class="flex flex-col max-h-[460px] overflow-y-auto -mx-1 px-1"></div>
             </section>
+
+            <!-- link import & file upload panel -->
             <section
               id="dropzone"
-              class="card data-[over=true]:border-accent border-dashed p-5 transition-colors data-[over=true]:bg-raised/40 hidden animate-enter flex flex-col gap-4"
+              class="card p-5 flex flex-col gap-4 hidden animate-enter"
+              data-over="false"
             >
+              <!-- link import -->
               <div class="flex flex-col gap-2">
-                <h2 class="text-sm font-semibold text-fg">Paste Links or Playlists</h2>
-                <div class="flex items-stretch gap-2">
+                <div class="flex items-baseline justify-between mb-0.5">
+                  <span class="text-fg font-semibold text-sm">Paste a link</span>
+                  <span class="text-muted" style="font-size:11px">Spotify, YouTube, YouTube Music, playlist, M3U</span>
+                </div>
+                <div class="flex gap-2">
                   <div class="relative flex-1">
+                    <svg class="icon absolute left-3.5 top-1/2 -translate-y-1/2 text-muted/60 pointer-events-none" viewBox="0 0 24 24">
+                      <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>
+                    </svg>
                     <input
                       id="urlInput"
                       type="text"
-                      class="field w-full pl-9 py-2.5 text-sm"
-                      placeholder="Paste Spotify playlist URL, YouTube link, YouTube Music album, or audio URL…"
+                      class="field w-full pl-10 py-2.5 text-sm"
+                      placeholder="https://open.spotify.com/playlist/… or youtube.com/…"
+                      autocomplete="off"
                     />
-                    <svg
-                      class="icon absolute left-3 top-3 text-muted pointer-events-none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"
-                      />
-                    </svg>
                   </div>
-                  <button id="importBtn" class="btn btn-primary px-4 py-2.5 font-medium shrink-0">
-                    Import
-                  </button>
+                  <button id="importBtn" class="btn btn-primary px-5 shrink-0">Import</button>
                 </div>
-                <p id="uploadMessage" class="text-muted min-h-4 text-xs" role="status"></p>
+                <p id="uploadMessage" class="text-muted min-h-4" style="font-size:11.5px" role="status"></p>
               </div>
 
-              <div class="border-t border-edge pt-3.5 flex items-center justify-between">
+              <!-- file upload -->
+              <div class="flex items-center justify-between gap-4 pt-3.5 border-t border-edge/50">
                 <div>
-                  <h3 class="text-xs font-semibold text-fg">Upload Local Audio</h3>
-                  <p class="text-muted text-[11px]">MP3, M4A, WAV, FLAC, OGG, Opus, WebM</p>
+                  <p class="text-fg font-medium text-sm">Upload audio files</p>
+                  <p class="text-muted mt-0.5" style="font-size:11.5px">MP3, FLAC, WAV, M4A, OGG, Opus, WebM — drag &amp; drop supported</p>
                 </div>
-                <button id="pickFiles" class="btn text-xs">
+                <button id="pickFiles" class="btn shrink-0">
                   <svg class="icon" viewBox="0 0 24 24">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
                   </svg>
                   Choose files
                 </button>
-                <input
-                  id="fileInput"
-                  type="file"
-                  multiple
-                  hidden
-                  accept="audio/*,.mp3,.m4a,.aac,.wav,.flac,.ogg,.opus,.wma,.aiff,.mp4,.webm"
-                />
+                <input id="fileInput" type="file" multiple hidden accept="audio/*,.mp3,.m4a,.aac,.wav,.flac,.ogg,.opus,.wma,.aiff,.mp4,.webm" />
               </div>
             </section>
 
-            <!-- 3. Playlist View (Spotify / YouTube Playlists) -->
+            <!-- playlist view -->
             <section
               id="playlistSection"
-              class="card hidden flex-col gap-3.5 p-4 animate-enter border-accent/30 shadow-md"
-              aria-label="Playlist View"
+              class="card hidden flex-col gap-3.5 p-4 animate-enter"
+              style="border-color: rgba(16,185,129,0.2)"
+              aria-label="Playlist"
             >
-              <div class="flex items-start gap-3.5">
+              <div class="flex items-start gap-3">
                 <img
                   id="playlistCover"
                   src=""
                   alt=""
-                  class="size-16 rounded-xl object-cover bg-edge shrink-0 hidden shadow"
-                  onerror="this.style.display = 'none'"
+                  class="size-14 rounded-xl object-cover bg-raised shrink-0 hidden"
+                  style="box-shadow:0 2px 12px rgba(0,0,0,0.4)"
+                  onerror="this.style.display='none'"
                 />
                 <div class="min-w-0 flex-1">
                   <div class="flex flex-wrap items-center gap-2">
-                    <h2 id="playlistTitle" class="text-base font-semibold truncate text-fg"></h2>
-                    <span id="playlistBadge" class="pill font-mono"></span>
-                    <span id="playlistCount" class="text-xs text-muted"></span>
+                    <h2 id="playlistTitle" class="text-sm font-semibold truncate text-fg"></h2>
+                    <span id="playlistBadge" class="pill"></span>
+                    <span id="playlistCount" class="text-muted" style="font-size:11.5px"></span>
                   </div>
-                  <p id="playlistDesc" class="text-muted text-xs truncate mt-1 hidden"></p>
+                  <p id="playlistDesc" class="text-muted truncate mt-0.5 hidden" style="font-size:11.5px"></p>
                 </div>
-                <div class="flex items-center gap-2 shrink-0">
-                  <button id="playlistDownloadAll" class="btn btn-primary text-xs py-1.5 px-3">
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button id="playlistDownloadAll" class="btn btn-primary">
+                    <svg class="icon" viewBox="0 0 24 24">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                    </svg>
                     Download all
                   </button>
-                  <button
-                    id="playlistClose"
-                    class="btn btn-icon"
-                    title="Close playlist view"
-                    aria-label="Close"
-                  >
-                    <svg class="icon" viewBox="0 0 24 24">
-                      <path d="M18 6 6 18M6 6l12 12" />
-                    </svg>
+                  <button id="playlistClose" class="btn btn-icon btn-ghost" title="Close" aria-label="Close">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
                   </button>
                 </div>
               </div>
-              <div class="flex items-center gap-2 mt-0.5">
-                <input
-                  id="playlistSearch"
-                  type="text"
-                  placeholder="Filter tracks in playlist…"
-                  class="field flex-1 py-1.5 px-3 text-xs"
-                />
-                <span id="playlistSearchCount" class="text-xs text-muted shrink-0 font-mono"></span>
+              <div class="flex items-center gap-2">
+                <div class="relative flex-1">
+                  <svg class="icon absolute left-2.5 top-1/2 -translate-y-1/2 text-muted/50 pointer-events-none" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                  </svg>
+                  <input
+                    id="playlistSearch"
+                    type="text"
+                    placeholder="Filter tracks…"
+                    class="field flex-1 w-full py-1.5 pl-8 pr-3"
+                    style="font-size:12.5px"
+                  />
+                </div>
+                <span id="playlistSearchCount" class="text-muted shrink-0 tabular-nums" style="font-size:11px"></span>
               </div>
-              <div
-                id="playlistTracks"
-                class="mt-1 max-h-96 overflow-y-auto divide-y divide-edge/60 pr-1 flex flex-col gap-0.5"
-              ></div>
+              <div id="playlistTracks" class="max-h-80 overflow-y-auto -mx-1 px-1 flex flex-col divide-y divide-edge/40"></div>
             </section>
 
-            <!-- 4. Queue & Processing List -->
-            <section class="flex flex-col gap-3">
+            <!-- queue section -->
+            <section class="flex flex-col gap-3 mt-1">
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <h2 class="text-base font-semibold text-fg">Queue</h2>
+                <div class="flex items-center gap-2.5">
+                  <h2 class="font-semibold text-fg text-sm">Downloads</h2>
                   <span id="queueCount" class="hidden"></span>
                 </div>
-                <div class="flex items-center gap-2">
-                  <button id="zipBtn" class="btn text-xs py-1.5 px-3" disabled>
+                <div class="flex items-center gap-1.5">
+                  <button id="zipBtn" class="btn" disabled>
                     <svg class="icon" viewBox="0 0 24 24">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
                     </svg>
-                    Download ZIP
+                    ZIP all
                   </button>
-                  <button id="clearBtn" class="btn text-xs py-1.5 px-3" disabled>
+                  <button id="clearBtn" class="btn" disabled>
                     <svg class="icon" viewBox="0 0 24 24">
-                      <path
-                        d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
-                      />
+                      <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
                     </svg>
                     Clear done
                   </button>
@@ -349,44 +313,49 @@
               </div>
 
               <div id="batchBar" class="bar" hidden><i></i></div>
-              <div id="queueList" class="flex flex-col gap-2.5"></div>
+              <div id="queueList" class="flex flex-col gap-2"></div>
 
-              <p
+              <div
                 id="emptyState"
-                class="border-edge text-muted rounded-xl border border-dashed py-8 px-6 text-xs text-center flex flex-col gap-1 bg-panel/40"
+                class="rounded-2xl border border-edge/40 border-dashed py-10 px-6 text-center flex flex-col items-center gap-2"
+                style="background:rgba(16,185,129,0.015)"
               >
-                <span class="font-medium text-fg text-sm">Nothing in queue right now</span>
-                <span>Search for a song above or paste playlist links to begin downloading.</span>
-              </p>
+                <svg class="size-8 text-edge-strong mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+                </svg>
+                <span class="font-medium text-fg text-sm">Nothing queued yet</span>
+                <span class="text-muted max-w-xs" style="font-size:12px">Search for a track or paste a Spotify / YouTube link above to start.</span>
+              </div>
             </section>
           </div>
 
-          <!-- Right Sidebar: Audio Profile & Notes (4 cols) -->
-          <div class="lg:col-span-4 flex flex-col gap-5 sticky top-20">
-            <!-- Audio Profile & Compression Controls -->
+          <!-- right sidebar -->
+          <aside class="lg:col-span-4 flex flex-col gap-4 lg:sticky lg:top-[60px]">
+
+            <!-- audio profile -->
             <section class="card p-4 flex flex-col gap-3.5" aria-label="Audio Profile">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold text-fg uppercase tracking-wider">Audio Profile</span>
-                <span class="text-[11px] text-muted font-mono">LAME / Opus / AAC</span>
+                <span class="section-label">Audio Profile</span>
+                <span class="text-muted font-mono" style="font-size:10px">LAME · Opus · AAC</span>
               </div>
 
-              <div id="profileTabs" class="border-edge bg-ink flex gap-[3px] rounded-lg border p-[3px]">
+              <div id="profileTabs" class="grid grid-cols-5 gap-0.5 bg-ink rounded-xl p-0.5 border border-edge/60">
                 <button class="tab" data-profile="auto">Auto<small>Recommended</small></button>
                 <button class="tab" data-profile="best">Best<small>320k VBR</small></button>
-                <button class="tab" data-profile="balanced">Balanced<small>192k</small></button>
-                <button class="tab" data-profile="small">Compact<small>128k</small></button>
-                <button class="tab" data-profile="custom">Custom<small>Advanced</small></button>
+                <button class="tab" data-profile="balanced">192k<small>Balanced</small></button>
+                <button class="tab" data-profile="small">128k<small>Compact</small></button>
+                <button class="tab" data-profile="custom">Custom<small>Manual</small></button>
               </div>
 
-              <p id="autoHint" class="text-muted text-xs">
-                Automatically matches source quality. Clamped at minimum 128 kbps.
+              <p id="autoHint" class="text-muted" style="font-size:11.5px;line-height:1.5">
+                Picks the best quality per file. Never drops below 128 kbps.
               </p>
 
-              <div id="advanced" class="hidden flex-col gap-3 pt-2 border-t border-edge">
-                <div class="grid grid-cols-2 gap-2.5">
+              <div id="advanced" class="hidden flex-col gap-3 pt-3 border-t border-edge/50">
+                <div class="grid grid-cols-2 gap-2">
                   <label class="field-label">
                     Format
-                    <select id="format" class="field">
+                    <select id="format" class="field mt-1">
                       <option value="mp3">MP3</option>
                       <option value="m4a">M4A (AAC)</option>
                       <option value="opus">Opus</option>
@@ -395,19 +364,11 @@
                   </label>
                   <label class="field-label">
                     Bitrate (kbps)
-                    <input
-                      id="bitrate"
-                      type="number"
-                      min="128"
-                      max="320"
-                      step="8"
-                      value="192"
-                      class="field font-mono"
-                    />
+                    <input id="bitrate" type="number" min="128" max="320" step="8" value="192" class="field font-mono mt-1" />
                   </label>
                   <label class="field-label">
                     Sample rate
-                    <select id="sampleRate" class="field font-mono">
+                    <select id="sampleRate" class="field font-mono mt-1">
                       <option value="0">Original</option>
                       <option value="48000">48 kHz</option>
                       <option value="44100">44.1 kHz</option>
@@ -416,7 +377,7 @@
                   </label>
                   <label class="field-label">
                     Channels
-                    <select id="channels" class="field">
+                    <select id="channels" class="field mt-1">
                       <option value="0">Original</option>
                       <option value="2">Stereo</option>
                       <option value="1">Mono</option>
@@ -425,127 +386,120 @@
                 </div>
                 <label class="check">
                   <input type="checkbox" id="vbr" />
-                  <span>Variable Bitrate (VBR) — Better size/quality</span>
+                  <span>Variable bitrate (VBR)</span>
                 </label>
               </div>
 
-              <label class="check border-t border-edge pt-2">
+              <label class="check border-t border-edge/50 pt-3">
                 <input type="checkbox" id="hostToggle" />
-                <span>
-                  Public streaming link
-                  <span class="text-muted block text-[11px]">Expires in <span data-ttl>1 hour</span></span>
+                <span class="flex flex-col">
+                  <span>Generate public link</span>
+                  <span class="text-muted mt-0.5" style="font-size:10.5px">Expires in <span data-ttl>1 hour</span></span>
                 </span>
               </label>
             </section>
 
-            <!-- Clean, Friendly Notes Section -->
+            <!-- notes -->
             <section class="card p-4 flex flex-col gap-2.5" aria-label="Notes">
-              <h3 class="text-xs font-semibold text-fg uppercase tracking-wider">Notes</h3>
-              <ul class="text-xs text-muted/90 space-y-2">
-                <li class="flex items-start gap-2">
-                  <span class="text-accent mt-0.5">•</span>
-                  <span><strong class="text-fg font-medium">Studio tracks:</strong> Spotify and search queries match official studio releases, skipping video intros, visualizers, and pauses.</span>
+              <span class="section-label">Notes</span>
+              <ul class="flex flex-col gap-2.5" style="font-size:12px;color:var(--color-muted)">
+                <li class="flex gap-2.5">
+                  <span class="text-accent shrink-0 mt-px">↗</span>
+                  <span><span class="text-fg font-medium">Studio tracks only.</span> Spotify and search queries resolve to official YouTube Music releases — no remixes, intros, or visualizers.</span>
                 </li>
-                <li class="flex items-start gap-2">
-                  <span class="text-accent mt-0.5">•</span>
-                  <span><strong class="text-fg font-medium">Audio fidelity:</strong> Enforces a minimum 128 kbps bitrate floor so audio never sounds distorted.</span>
+                <li class="flex gap-2.5">
+                  <span class="text-accent shrink-0 mt-px">↗</span>
+                  <span><span class="text-fg font-medium">128 kbps floor.</span> Quality never drops below minimum regardless of source or profile.</span>
                 </li>
-                <li class="flex items-start gap-2">
-                  <span class="text-accent mt-0.5">•</span>
-                  <span><strong class="text-fg font-medium">Auto-save:</strong> Download queue and history are preserved across refreshes.</span>
+                <li class="flex gap-2.5">
+                  <span class="text-accent shrink-0 mt-px">↗</span>
+                  <span><span class="text-fg font-medium">Session-persistent.</span> Queue and history survive refreshes.</span>
                 </li>
-                <li class="flex items-start gap-2">
-                  <span class="text-accent mt-0.5">•</span>
-                  <span id="limitsNote">Max 200 MB per file.</span>
+                <li class="flex gap-2.5">
+                  <span class="text-muted/60 shrink-0 mt-px">—</span>
+                  <span id="limitsNote" class="text-muted/70">Max 200 MB per file.</span>
                 </li>
               </ul>
             </section>
-          </div>
+
+          </aside>
         </div>
       </div>
     </main>
 
-    <!-- Clean Centered Footer with GitHub Button & Credits -->
-    <footer class="border-edge text-muted border-t py-6 text-xs bg-panel/40">
-      <div class="mx-auto flex flex-col sm:flex-row items-center justify-center gap-3.5 px-4 text-center">
+    <!-- footer -->
+    <footer class="border-t border-edge/40 py-5 mt-4" style="background:rgba(15,17,21,0.5)">
+      <div class="mx-auto flex items-center justify-center gap-4 px-4 text-center flex-wrap">
         <a
           href="https://github.com/paragon506/samp-ytm"
           target="_blank"
           rel="noopener"
-          class="btn gap-2 text-xs py-1.5 px-3.5 bg-panel hover:bg-raised text-fg border-edge font-medium shadow-sm transition-all"
+          class="btn"
+          style="font-size:12px"
         >
-          <svg class="size-4 fill-current shrink-0" viewBox="0 0 24 24">
-            <path
-              d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"
-            />
+          <svg class="size-3.5 fill-current shrink-0" viewBox="0 0 24 24">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/>
           </svg>
-          <span>GitHub</span>
+          GitHub
         </a>
-        <span class="text-muted/80">Developed by paragon506</span>
+        <span class="text-muted" style="font-size:11.5px">by paragon506</span>
       </div>
     </footer>
 
-    <!-- Toast message popup -->
+    <!-- toast -->
     <div
       id="toast"
       role="status"
-      class="border-edge-strong bg-raised pointer-events-none fixed bottom-6 left-1/2 max-w-[92vw] -translate-x-1/2 translate-y-5 rounded-lg border px-3.5 py-2 text-[13px] opacity-0 transition data-[show=true]:translate-y-0 data-[show=true]:opacity-100 z-50 shadow-xl"
+      class="pointer-events-none fixed bottom-5 left-1/2 max-w-[90vw] -translate-x-1/2 translate-y-4 rounded-xl border border-edge-strong bg-raised px-4 py-2 opacity-0 transition-all duration-200 data-[show=true]:translate-y-0 data-[show=true]:opacity-100 z-50"
+      style="font-size:13px;box-shadow:0 4px 24px rgba(0,0,0,0.5)"
     ></div>
 
-    <!-- Row Template for Queue Items -->
+    <!-- queue row template -->
     <template id="rowTemplate">
-      <article
-        class="card animate-enter px-4 py-3 border-edge/80 hover:border-edge transition-colors"
-      >
+      <article class="card animate-enter hover:border-edge transition-all" style="padding:14px 16px">
         <div class="flex items-center gap-3">
-          <div class="min-w-0 flex-1">
-            <div data-role="title" class="truncate font-semibold text-sm text-fg"></div>
-            <div data-role="sub" class="text-muted truncate text-xs mt-0.5"></div>
+          <!-- cover thumbnail placeholder -->
+          <div data-role="cover" class="size-10 rounded-lg bg-raised border border-edge/60 shrink-0 overflow-hidden flex items-center justify-center text-muted/40">
+            <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+            </svg>
           </div>
-          <span data-role="pill" class="pill font-mono text-[11px]"></span>
-          <div data-role="actions" class="flex gap-1.5 items-center"></div>
+          <div class="min-w-0 flex-1">
+            <div data-role="title" class="truncate font-semibold text-fg text-sm leading-tight"></div>
+            <div data-role="sub" class="text-muted truncate mt-0.5" style="font-size:11.5px"></div>
+          </div>
+          <span data-role="pill" class="pill shrink-0"></span>
+          <div data-role="actions" class="flex gap-1 items-center shrink-0"></div>
         </div>
-        <div data-role="bar" class="bar mt-2.5"><i></i></div>
+
+        <div data-role="bar" class="bar mt-3"><i></i></div>
+
+        <!-- result row (shown when done) -->
         <div
           data-role="result"
-          class="mt-3 hidden flex-wrap items-center gap-x-4 gap-y-2 text-[13px] border-t border-edge/40 pt-2.5"
+          class="hidden mt-3 pt-3 border-t border-edge/40 flex-wrap items-center gap-x-4 gap-y-2"
         >
-          <span data-role="sizes" class="text-muted font-mono text-xs"></span>
-          <b data-role="saved" class="text-accent font-semibold text-xs font-mono"></b>
-          <span data-role="meta" class="text-muted text-xs"></span>
-          <audio
-            data-role="player"
-            controls
-            preload="none"
-            class="h-9 w-full rounded-md mt-1"
-          ></audio>
+          <span data-role="sizes" class="text-muted font-mono" style="font-size:11.5px"></span>
+          <b data-role="saved" class="text-accent font-semibold font-mono" style="font-size:11.5px"></b>
+          <span data-role="meta" class="text-muted" style="font-size:11.5px"></span>
+          <audio data-role="player" controls preload="none" class="w-full mt-2 rounded-lg" style="height:36px"></audio>
         </div>
-        <form
-          data-role="editor"
-          class="border-edge mt-3 hidden grid-cols-1 gap-2.5 border-t pt-3 sm:grid-cols-2"
-        >
-          <label class="field-label sm:col-span-2"
-            >Title<input name="title" maxlength="200" class="field"
-          /></label>
-          <label class="field-label"
-            >Artist<input name="artist" maxlength="200" class="field"
-          /></label>
-          <label class="field-label"
-            >Album<input name="album" maxlength="200" class="field"
-          /></label>
-          <label class="field-label"
-            >Year<input name="year" inputmode="numeric" maxlength="4" pattern="\d{4}" class="field"
-          /></label>
-          <label class="field-label"
-            >Genre<input name="genre" maxlength="200" class="field"
-          /></label>
-          <div class="flex flex-wrap items-center gap-2 sm:col-span-2">
-            <button type="submit" class="btn btn-primary text-xs">Save tags</button>
-            <button type="button" data-role="cancelEdit" class="btn text-xs">Cancel</button>
-            <span class="text-muted text-xs">Cover art is kept. The audio is not re-encoded.</span>
+
+        <!-- tag editor -->
+        <form data-role="editor" class="border-edge/60 mt-3 hidden grid-cols-1 gap-2 border-t pt-3 sm:grid-cols-2">
+          <label class="field-label sm:col-span-2">Title <input name="title" maxlength="200" class="field mt-1" /></label>
+          <label class="field-label">Artist <input name="artist" maxlength="200" class="field mt-1" /></label>
+          <label class="field-label">Album <input name="album" maxlength="200" class="field mt-1" /></label>
+          <label class="field-label">Year <input name="year" inputmode="numeric" maxlength="4" pattern="\d{4}" class="field mt-1" /></label>
+          <label class="field-label">Genre <input name="genre" maxlength="200" class="field mt-1" /></label>
+          <div class="flex flex-wrap items-center gap-2 sm:col-span-2 mt-1">
+            <button type="submit" class="btn btn-primary">Save tags</button>
+            <button type="button" data-role="cancelEdit" class="btn">Cancel</button>
+            <span class="text-muted" style="font-size:11px">Audio is not re-encoded. Cover art is preserved.</span>
           </div>
         </form>
-        <p data-role="error" class="text-danger mt-2 hidden text-[13px]"></p>
+
+        <p data-role="error" class="text-danger hidden mt-2" style="font-size:12.5px"></p>
       </article>
     </template>
   </body>
