@@ -127,7 +127,8 @@ async function refreshStatus() {
     const [health, info] = await Promise.all([fetchPublic('/health'), fetchPublic('/api/info')]);
     dot.dataset.state = 'ok';
     if (health.running > 0) {
-      $('#statusText').textContent = `${health.running} job${health.running > 1 ? 's' : ''} running`;
+      $('#statusText').textContent =
+        `${health.running} job${health.running > 1 ? 's' : ''} running`;
     } else if (health.jobs > 0) {
       $('#statusText').textContent = `${health.jobs} in queue`;
     } else {

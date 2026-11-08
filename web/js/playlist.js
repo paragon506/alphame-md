@@ -67,43 +67,6 @@ export function clearHistory() {
   localStorage.removeItem(HISTORY_KEY);
 }
 
-// ── Download history ──────────────────────────────────────────────────────────
-const HISTORY_KEY = 'alphame-dl-history';
-const HISTORY_MAX = 2000;
-
-function historyLoad() {
-  try {
-    return new Set(JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'));
-  } catch {
-    return new Set();
-  }
-}
-
-function historySave(set) {
-  try {
-    const arr = [...set].slice(-HISTORY_MAX);
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(arr));
-  } catch {}
-}
-
-function historyKey(track) {
-  return `${(track.title || '').toLowerCase().trim()}|||${(track.artist || '').toLowerCase().trim()}`;
-}
-
-export function markDownloaded(track) {
-  const set = historyLoad();
-  set.add(historyKey(track));
-  historySave(set);
-}
-
-export function wasDownloaded(track) {
-  return historyLoad().has(historyKey(track));
-}
-
-export function clearHistory() {
-  localStorage.removeItem(HISTORY_KEY);
-}
-
 function renderTrackItem(track, getOptions, onQueued) {
   const item = document.createElement('div');
   item.className =

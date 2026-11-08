@@ -107,7 +107,8 @@ export async function encode(job, src, info) {
   // Enforce minimum 128 kbps always
   let br = Math.max(o.bitrate, 128);
   // For lossy sources don't upscale beyond the source bitrate (but keep minimum)
-  if (lossySrc && info.br) br = Math.max(128, Math.min(br, STD_BR.find((s) => s <= info.br + 8) || STD_BR.at(-1)));
+  if (lossySrc && info.br)
+    br = Math.max(128, Math.min(br, STD_BR.find((s) => s <= info.br + 8) || STD_BR.at(-1)));
   const sameCodec = info.codec === 'mp3' && o.format === 'mp3';
   const alreadyOk =
     sameCodec &&
