@@ -3,77 +3,75 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0a0b0d" />
+    <meta name="theme-color" content="#090a0d" />
     <title>AlphaMe · High-Fidelity Music Downloader & Compressor</title>
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f1114'/%3E%3Cpath d='M6 16h2M11 11v10M16 6v20M21 11v10M26 14v4' stroke='%2310b981' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23111317'/%3E%3Cpath d='M6 16h2M11 11v10M16 6v20M21 11v10M26 14v4' stroke='%2310b981' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E"
     />
     <link rel="stylesheet" href="assets/styles.css" />
     <script src="config.js"></script>
     <script type="module" src="js/main.js"></script>
   </head>
-  <body class="flex min-h-screen flex-col bg-[#0a0b0d] text-[#e7e8ea] antialiased">
+  <body class="flex min-h-screen flex-col bg-ink text-fg antialiased">
     <!-- Header -->
-    <header class="border-edge border-b bg-[#0f1114]/80 backdrop-blur sticky top-0 z-30">
-      <div class="mx-auto flex h-14 w-full max-w-5xl items-center gap-4 px-4 sm:px-6">
-        <a
-          href="#top"
-          class="flex items-center gap-2.5 font-semibold tracking-tight text-base group"
+    <header class="border-edge border-b bg-panel/80 backdrop-blur sticky top-0 z-30">
+      <div class="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <!-- Logo (No Studio tag, smooth scroll on click) -->
+        <div
+          class="flex items-center gap-2.5 font-bold tracking-tight text-base cursor-pointer select-none group"
+          onclick="window.scrollTo({top:0, behavior:'smooth'})"
+          role="button"
+          tabindex="0"
         >
           <div
-            class="size-8 rounded-lg bg-gradient-to-br from-accent-deep via-[#142e23] to-[#0a1a14] border border-accent/30 flex items-center justify-center text-accent shadow-sm shadow-accent/10 group-hover:border-accent/60 transition-all"
+            class="size-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-accent shadow-sm group-hover:border-emerald-500/60 transition-all"
           >
             <svg class="icon size-4.5" viewBox="0 0 24 24">
               <path d="M2 10v4M6 6v12M10 3v18M14 7v10M18 5v14M22 10v4" />
             </svg>
           </div>
-          <span class="flex items-center gap-1.5 font-bold tracking-tight">
-            AlphaMe
-            <span
-              class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-accent/10 border border-accent/20 text-accent font-semibold tracking-widest"
-              >Studio</span
-            >
-          </span>
-        </a>
-
-        <div class="flex-1"></div>
-
-        <!-- Live Server Status Indicator -->
-        <div
-          class="flex items-center gap-2 text-xs border border-edge bg-raised/50 px-2.5 py-1 rounded-full text-muted"
-          title="Server status"
-        >
-          <span
-            id="statusDot"
-            class="size-2 rounded-full bg-neutral-600 data-[state=ok]:bg-accent data-[state=down]:bg-danger transition-colors relative"
-          ></span>
-          <span id="statusText" class="font-medium text-[11px]">Connecting…</span>
+          <span class="font-bold text-fg tracking-tight text-base">AlphaMe</span>
         </div>
 
-        <button
-          id="settingsToggle"
-          class="btn btn-icon"
-          aria-label="Settings"
-          title="Preferences & Settings"
-          aria-expanded="false"
-        >
-          <svg class="icon" viewBox="0 0 24 24">
-            <path
-              d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.8l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7V20a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.8v-.5a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2z"
-            />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-        </button>
+        <div class="flex items-center gap-3">
+          <!-- Live Server Health Badge -->
+          <div
+            class="flex items-center gap-2 text-xs border border-edge bg-raised/60 px-2.5 py-1 rounded-full text-muted"
+            title="Server connection"
+          >
+            <span
+              id="statusDot"
+              class="size-2 rounded-full bg-neutral-600 data-[state=ok]:bg-accent data-[state=down]:bg-danger transition-colors"
+            ></span>
+            <span id="statusText" class="font-medium text-[11px]">Connecting…</span>
+          </div>
+
+          <!-- Preferences Toggle -->
+          <button
+            id="settingsToggle"
+            class="btn btn-icon"
+            aria-label="Settings"
+            title="Preferences & Settings"
+            aria-expanded="false"
+          >
+            <svg class="icon" viewBox="0 0 24 24">
+              <path
+                d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.8l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7V20a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.8v-.5a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2z"
+              />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+        </div>
       </div>
     </header>
 
-    <main id="top" class="flex-1 py-7">
-      <div class="mx-auto w-full max-w-5xl px-4 sm:px-6">
-        <!-- Settings drawer panel -->
+    <main class="flex-1 py-6">
+      <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <!-- Collapsible Settings Panel -->
         <section
           id="settingsPanel"
-          class="card mb-5 hidden flex-col gap-4 p-5 animate-enter border-accent/20 bg-[#121417]"
+          class="card mb-6 hidden flex-col gap-4 p-5 animate-enter border-accent/20 bg-panel"
           aria-label="Settings"
         >
           <div class="flex items-center justify-between border-b border-edge pb-2">
@@ -104,414 +102,418 @@
           </p>
         </section>
 
-        <!-- Mode Navigation Tabs -->
-        <div class="flex items-center gap-2 mb-3">
-          <div class="flex rounded-lg border border-edge bg-panel p-1 gap-1">
-            <button
-              id="tabSearchMode"
-              class="px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all bg-raised text-fg border border-edge-strong shadow-sm"
-              onclick="
-                document.getElementById('browserPanel').classList.remove('hidden');
-                document.getElementById('dropzone').classList.add('hidden');
-                this.className =
-                  'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all bg-raised text-fg border border-edge-strong shadow-sm';
-                document.getElementById('tabImportMode').className =
-                  'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all text-muted hover:text-fg';
-              "
-            >
-              Search YouTube Music
-            </button>
-            <button
-              id="tabImportMode"
-              class="px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all text-muted hover:text-fg"
-              onclick="
-                document.getElementById('dropzone').classList.remove('hidden');
-                document.getElementById('browserPanel').classList.add('hidden');
-                this.className =
-                  'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all bg-raised text-fg border border-edge-strong shadow-sm';
-                document.getElementById('tabSearchMode').className =
-                  'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all text-muted hover:text-fg';
-              "
-            >
-              Paste Link or Drop Files
-            </button>
-          </div>
-          <div class="flex-1"></div>
-        </div>
-
-        <!-- 1. Integrated Search & Browser Panel -->
-        <section
-          id="browserPanel"
-          class="card p-5 flex flex-col gap-3.5 animate-enter shadow-lg shadow-black/20"
-          aria-label="YouTube Music Browser"
-        >
-          <div class="flex flex-col gap-1">
-            <h2 class="text-base font-semibold text-fg">Search & Download Songs</h2>
-            <p class="text-muted text-xs">
-              Directly searches official studio tracks on YouTube Music. No video intros, skits, or
-              visualizers.
-            </p>
-          </div>
-
-          <div class="flex items-stretch gap-2 mt-1">
-            <div class="relative flex-1">
-              <input
-                id="browserInput"
-                type="text"
-                class="field w-full pl-9 py-2.5 text-sm"
-                placeholder="Search song, artist, or album (e.g. The Weeknd, Bohemian Rhapsody, Dua Lipa)…"
-              />
-              <svg
-                class="icon absolute left-3 top-3.5 text-muted pointer-events-none"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
-            </div>
-            <button id="browserBtn" class="btn btn-primary px-4 py-2.5 font-medium shrink-0">
-              <svg class="icon" viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
-              Search
-            </button>
-          </div>
-
-          <!-- Quick search chip suggestions -->
-          <div class="flex flex-wrap items-center gap-1.5 text-xs text-muted">
-            <span class="text-[11px] uppercase tracking-wider opacity-70">Popular:</span>
-            <button
-              class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
-              onclick="
-                document.getElementById('browserInput').value = 'The Weeknd Blinding Lights';
-                document.getElementById('browserBtn').click();
-              "
-            >
-              The Weeknd
-            </button>
-            <button
-              class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
-              onclick="
-                document.getElementById('browserInput').value = 'Daft Punk';
-                document.getElementById('browserBtn').click();
-              "
-            >
-              Daft Punk
-            </button>
-            <button
-              class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
-              onclick="
-                document.getElementById('browserInput').value = 'Bad Bunny';
-                document.getElementById('browserBtn').click();
-              "
-            >
-              Bad Bunny
-            </button>
-            <button
-              class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
-              onclick="
-                document.getElementById('browserInput').value = 'Queen';
-                document.getElementById('browserBtn').click();
-              "
-            >
-              Queen
-            </button>
-            <button
-              class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
-              onclick="
-                document.getElementById('browserInput').value = 'Dua Lipa';
-                document.getElementById('browserBtn').click();
-              "
-            >
-              Dua Lipa
-            </button>
-          </div>
-
-          <!-- Search Status & Results list -->
-          <p id="browserStatus" class="text-xs text-muted min-h-4 hidden"></p>
-          <div
-            id="browserResults"
-            class="flex flex-col gap-1 max-h-[460px] overflow-y-auto pr-1"
-          ></div>
-        </section>
-
-        <!-- 2. Link & File Dropzone Panel (Initially hidden, toggled by tabs) -->
-        <section
-          id="dropzone"
-          class="card data-[over=true]:border-accent border-dashed px-5 py-6 transition-colors data-[over=true]:bg-[#14201a] hidden animate-enter"
-        >
-          <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
-            <div class="flex flex-col gap-2.5 sm:w-60 shrink-0">
-              <h2 class="text-[15px] font-semibold text-fg">Upload Audio Files</h2>
-              <p class="text-muted text-xs">MP3, M4A, WAV, FLAC, OGG, Opus, WebM and more</p>
-              <button id="pickFiles" class="btn btn-primary w-fit mt-1">
-                <svg class="icon" viewBox="0 0 24 24">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
-                </svg>
-                Choose files
-              </button>
-              <input
-                id="fileInput"
-                type="file"
-                multiple
-                hidden
-                accept="audio/*,.mp3,.m4a,.aac,.wav,.flac,.ogg,.opus,.wma,.aiff,.mp4,.webm"
-              />
-            </div>
-            <div class="flex flex-1 flex-col gap-2">
-              <p class="text-muted text-xs font-medium uppercase tracking-wide">
-                Or paste links (Playlists, URLs, or M3U)
-              </p>
-              <div class="flex items-stretch gap-2">
-                <textarea
-                  id="urlInput"
-                  rows="2"
-                  class="field max-h-40 min-h-11 flex-1 resize-y text-left text-xs"
-                  placeholder="Paste Spotify playlist URL, YouTube link, YouTube Music album, or audio URL…"
-                ></textarea>
-                <button id="importBtn" class="btn justify-center self-start h-11 px-4">
-                  <svg class="icon" viewBox="0 0 24 24">
-                    <path
-                      d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"
-                    />
-                  </svg>
-                  Import
+        <!-- Main Responsive Studio Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- Left Workspace: Search, Dropzone, Playlist, and Queue (8 cols) -->
+          <div class="lg:col-span-8 flex flex-col gap-5">
+            <!-- Navigation Tabs (Search vs Import/Upload) -->
+            <div class="flex items-center gap-2">
+              <div class="flex rounded-lg border border-edge bg-panel p-1 gap-1">
+                <button
+                  id="tabSearchMode"
+                  class="px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all bg-raised text-fg border border-edge-strong shadow-sm"
+                  onclick="
+                    document.getElementById('browserPanel').classList.remove('hidden');
+                    document.getElementById('dropzone').classList.add('hidden');
+                    this.className =
+                      'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all bg-raised text-fg border border-edge-strong shadow-sm';
+                    document.getElementById('tabImportMode').className =
+                      'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all text-muted hover:text-fg';
+                  "
+                >
+                  Search YouTube Music
+                </button>
+                <button
+                  id="tabImportMode"
+                  class="px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all text-muted hover:text-fg"
+                  onclick="
+                    document.getElementById('dropzone').classList.remove('hidden');
+                    document.getElementById('browserPanel').classList.add('hidden');
+                    this.className =
+                      'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all bg-raised text-fg border border-edge-strong shadow-sm';
+                    document.getElementById('tabSearchMode').className =
+                      'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer transition-all text-muted hover:text-fg';
+                  "
+                >
+                  Paste Links or Upload
                 </button>
               </div>
-              <p id="uploadMessage" class="text-muted min-h-4 text-xs" role="status"></p>
             </div>
-          </div>
-        </section>
 
-        <!-- 3. Playlist View (Spotify or YouTube playlist) -->
-        <section
-          id="playlistSection"
-          class="card mt-3.5 hidden flex-col gap-3.5 p-4 animate-enter border-accent/30 shadow-md"
-          aria-label="Playlist View"
-        >
-          <div class="flex items-start gap-3.5">
-            <img
-              id="playlistCover"
-              src=""
-              alt=""
-              class="size-16 rounded-xl object-cover bg-edge shrink-0 hidden shadow"
-              onerror="this.style.display = 'none'"
-            />
-            <div class="min-w-0 flex-1">
-              <div class="flex flex-wrap items-center gap-2">
-                <h2 id="playlistTitle" class="text-base font-semibold truncate text-fg"></h2>
-                <span id="playlistBadge" class="pill font-mono"></span>
-                <span id="playlistCount" class="text-xs text-muted"></span>
-              </div>
-              <p id="playlistDesc" class="text-muted text-xs truncate mt-1 hidden"></p>
-            </div>
-            <div class="flex items-center gap-2 shrink-0">
-              <button id="playlistDownloadAll" class="btn btn-primary text-xs py-1.5 px-3">
-                Download all
-              </button>
-              <button
-                id="playlistClose"
-                class="btn btn-icon"
-                title="Close playlist view"
-                aria-label="Close"
-              >
-                <svg class="icon" viewBox="0 0 24 24">
-                  <path d="M18 6 6 18M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
-          <div class="flex items-center gap-2 mt-0.5">
-            <input
-              id="playlistSearch"
-              type="text"
-              placeholder="Filter tracks in playlist…"
-              class="field flex-1 py-1.5 px-3 text-xs"
-            />
-            <span id="playlistSearchCount" class="text-xs text-muted shrink-0 font-mono"></span>
-          </div>
-          <div
-            id="playlistTracks"
-            class="mt-1 max-h-96 overflow-y-auto divide-y divide-edge/60 pr-1 flex flex-col gap-0.5"
-          ></div>
-        </section>
-
-        <!-- 4. Compression Engine Controls -->
-        <section class="card mt-4 flex flex-col gap-3.5 p-4" aria-label="Compression Engine">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold text-fg tracking-wide uppercase"
-              >Encoding Profile</span
+            <!-- 1. Search YouTube Music Panel -->
+            <section
+              id="browserPanel"
+              class="card p-5 flex flex-col gap-3.5 animate-enter"
+              aria-label="YouTube Music Search"
             >
-            <span class="text-[11px] text-muted font-mono">LAME / Opus / AAC</span>
-          </div>
+              <div class="flex flex-col gap-1">
+                <h2 class="text-base font-semibold text-fg">Search YouTube Music</h2>
+                <p class="text-muted text-xs">
+                  Finds official studio releases. No video intros, dialogue, or visualizers.
+                </p>
+              </div>
 
-          <div id="profileTabs" class="border-edge bg-ink flex gap-[3px] rounded-lg border p-[3px]">
-            <button class="tab" data-profile="auto">Auto<small>Recommended</small></button>
-            <button class="tab" data-profile="best">Best<small>320 kbps VBR</small></button>
-            <button class="tab" data-profile="balanced">Balanced<small>192 kbps</small></button>
-            <button class="tab" data-profile="small">Compact<small>128 kbps</small></button>
-            <button class="tab" data-profile="custom">Custom<small>Advanced</small></button>
-          </div>
-          <p id="autoHint" class="text-muted text-xs">
-            Automatically targets optimal quality for the audio source. Minimum 128 kbps enforced.
-          </p>
+              <div class="flex items-stretch gap-2 mt-1">
+                <div class="relative flex-1">
+                  <input
+                    id="browserInput"
+                    type="text"
+                    class="field w-full pl-9 py-2.5 text-sm"
+                    placeholder="Search song, artist, or album (e.g. The Weeknd, Bohemian Rhapsody, Dua Lipa)…"
+                  />
+                  <svg
+                    class="icon absolute left-3 top-3 text-muted pointer-events-none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                  </svg>
+                </div>
+                <button id="browserBtn" class="btn btn-primary px-4 py-2.5 font-medium shrink-0">
+                  <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                  </svg>
+                  Search
+                </button>
+              </div>
 
-          <div id="advanced" class="hidden flex-col gap-3 pt-1 border-t border-edge">
-            <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-              <label class="field-label">
-                Format
-                <select id="format" class="field">
-                  <option value="mp3">MP3</option>
-                  <option value="m4a">M4A (AAC)</option>
-                  <option value="opus">Opus</option>
-                  <option value="ogg">OGG Vorbis</option>
-                </select>
-              </label>
-              <label class="field-label">
-                Bitrate (kbps)
+              <!-- Quick search suggestions -->
+              <div class="flex flex-wrap items-center gap-1.5 text-xs text-muted">
+                <span class="text-[11px] uppercase tracking-wider opacity-60">Popular:</span>
+                <button
+                  class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
+                  onclick="
+                    document.getElementById('browserInput').value = 'The Weeknd Blinding Lights';
+                    document.getElementById('browserBtn').click();
+                  "
+                >
+                  The Weeknd
+                </button>
+                <button
+                  class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
+                  onclick="
+                    document.getElementById('browserInput').value = 'Daft Punk';
+                    document.getElementById('browserBtn').click();
+                  "
+                >
+                  Daft Punk
+                </button>
+                <button
+                  class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
+                  onclick="
+                    document.getElementById('browserInput').value = 'Bad Bunny';
+                    document.getElementById('browserBtn').click();
+                  "
+                >
+                  Bad Bunny
+                </button>
+                <button
+                  class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
+                  onclick="
+                    document.getElementById('browserInput').value = 'Queen Bohemian Rhapsody';
+                    document.getElementById('browserBtn').click();
+                  "
+                >
+                  Queen
+                </button>
+                <button
+                  class="px-2 py-0.5 rounded-md border border-edge hover:border-edge-strong hover:bg-raised transition-colors text-muted hover:text-fg cursor-pointer"
+                  onclick="
+                    document.getElementById('browserInput').value = 'Dua Lipa';
+                    document.getElementById('browserBtn').click();
+                  "
+                >
+                  Dua Lipa
+                </button>
+              </div>
+
+              <!-- Search Status & Results list -->
+              <p id="browserStatus" class="text-xs text-muted min-h-4 hidden"></p>
+              <div
+                id="browserResults"
+                class="flex flex-col gap-1 max-h-[440px] overflow-y-auto pr-1"
+              ></div>
+            </section>
+
+            <!-- 2. Link Import & Audio File Upload (Single-line input, no resize corner) -->
+            <section
+              id="dropzone"
+              class="card data-[over=true]:border-accent border-dashed p-5 transition-colors data-[over=true]:bg-raised/40 hidden animate-enter flex flex-col gap-4"
+            >
+              <div class="flex flex-col gap-2">
+                <h2 class="text-sm font-semibold text-fg">Paste Links or Playlists</h2>
+                <div class="flex items-stretch gap-2">
+                  <div class="relative flex-1">
+                    <input
+                      id="urlInput"
+                      type="text"
+                      class="field w-full pl-9 py-2.5 text-sm"
+                      placeholder="Paste Spotify playlist URL, YouTube link, YouTube Music album, or audio URL…"
+                    />
+                    <svg
+                      class="icon absolute left-3 top-3 text-muted pointer-events-none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"
+                      />
+                    </svg>
+                  </div>
+                  <button id="importBtn" class="btn btn-primary px-4 py-2.5 font-medium shrink-0">
+                    Import
+                  </button>
+                </div>
+                <p id="uploadMessage" class="text-muted min-h-4 text-xs" role="status"></p>
+              </div>
+
+              <div class="border-t border-edge pt-3.5 flex items-center justify-between">
+                <div>
+                  <h3 class="text-xs font-semibold text-fg">Upload Local Audio</h3>
+                  <p class="text-muted text-[11px]">MP3, M4A, WAV, FLAC, OGG, Opus, WebM</p>
+                </div>
+                <button id="pickFiles" class="btn text-xs">
+                  <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                  </svg>
+                  Choose files
+                </button>
                 <input
-                  id="bitrate"
-                  type="number"
-                  min="128"
-                  max="320"
-                  step="8"
-                  value="192"
-                  class="field font-mono"
+                  id="fileInput"
+                  type="file"
+                  multiple
+                  hidden
+                  accept="audio/*,.mp3,.m4a,.aac,.wav,.flac,.ogg,.opus,.wma,.aiff,.mp4,.webm"
                 />
-              </label>
-              <label class="field-label">
-                Sample rate
-                <select id="sampleRate" class="field font-mono">
-                  <option value="0">Original</option>
-                  <option value="48000">48 kHz</option>
-                  <option value="44100">44.1 kHz</option>
-                  <option value="32000">32 kHz</option>
-                </select>
-              </label>
-              <label class="field-label">
-                Channels
-                <select id="channels" class="field">
-                  <option value="0">Original</option>
-                  <option value="2">Stereo</option>
-                  <option value="1">Mono</option>
-                </select>
-              </label>
-            </div>
-            <label class="check">
-              <input type="checkbox" id="vbr" />
-              <span>Variable Bitrate (VBR) — Higher fidelity at lower file size</span>
-            </label>
+              </div>
+            </section>
+
+            <!-- 3. Playlist View (Spotify / YouTube Playlists) -->
+            <section
+              id="playlistSection"
+              class="card hidden flex-col gap-3.5 p-4 animate-enter border-accent/30 shadow-md"
+              aria-label="Playlist View"
+            >
+              <div class="flex items-start gap-3.5">
+                <img
+                  id="playlistCover"
+                  src=""
+                  alt=""
+                  class="size-16 rounded-xl object-cover bg-edge shrink-0 hidden shadow"
+                  onerror="this.style.display = 'none'"
+                />
+                <div class="min-w-0 flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h2 id="playlistTitle" class="text-base font-semibold truncate text-fg"></h2>
+                    <span id="playlistBadge" class="pill font-mono"></span>
+                    <span id="playlistCount" class="text-xs text-muted"></span>
+                  </div>
+                  <p id="playlistDesc" class="text-muted text-xs truncate mt-1 hidden"></p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <button id="playlistDownloadAll" class="btn btn-primary text-xs py-1.5 px-3">
+                    Download all
+                  </button>
+                  <button
+                    id="playlistClose"
+                    class="btn btn-icon"
+                    title="Close playlist view"
+                    aria-label="Close"
+                  >
+                    <svg class="icon" viewBox="0 0 24 24">
+                      <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 mt-0.5">
+                <input
+                  id="playlistSearch"
+                  type="text"
+                  placeholder="Filter tracks in playlist…"
+                  class="field flex-1 py-1.5 px-3 text-xs"
+                />
+                <span id="playlistSearchCount" class="text-xs text-muted shrink-0 font-mono"></span>
+              </div>
+              <div
+                id="playlistTracks"
+                class="mt-1 max-h-96 overflow-y-auto divide-y divide-edge/60 pr-1 flex flex-col gap-0.5"
+              ></div>
+            </section>
+
+            <!-- 4. Queue & Processing List -->
+            <section class="flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <h2 class="text-base font-semibold text-fg">Queue</h2>
+                  <span id="queueCount" class="hidden"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button id="zipBtn" class="btn text-xs py-1.5 px-3" disabled>
+                    <svg class="icon" viewBox="0 0 24 24">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                    Download ZIP
+                  </button>
+                  <button id="clearBtn" class="btn text-xs py-1.5 px-3" disabled>
+                    <svg class="icon" viewBox="0 0 24 24">
+                      <path
+                        d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
+                      />
+                    </svg>
+                    Clear done
+                  </button>
+                </div>
+              </div>
+
+              <div id="batchBar" class="bar" hidden><i></i></div>
+              <div id="queueList" class="flex flex-col gap-2.5"></div>
+
+              <p
+                id="emptyState"
+                class="border-edge text-muted rounded-xl border border-dashed py-8 px-6 text-xs text-center flex flex-col gap-1 bg-panel/40"
+              >
+                <span class="font-medium text-fg text-sm">Nothing in queue right now</span>
+                <span>Search for a song above or paste playlist links to begin downloading.</span>
+              </p>
+            </section>
           </div>
 
-          <label class="check">
-            <input type="checkbox" id="hostToggle" />
-            <span class="text-xs">
-              Generate public streaming URL
-              <span class="text-muted">(direct link expires in <span data-ttl>1 hour</span>)</span>
-            </span>
-          </label>
-        </section>
+          <!-- Right Sidebar: Audio Profile & Notes (4 cols) -->
+          <div class="lg:col-span-4 flex flex-col gap-5 sticky top-20">
+            <!-- Audio Profile & Compression Controls -->
+            <section class="card p-4 flex flex-col gap-3.5" aria-label="Audio Profile">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-fg uppercase tracking-wider">Audio Profile</span>
+                <span class="text-[11px] text-muted font-mono">LAME / Opus / AAC</span>
+              </div>
 
-        <!-- 5. Active Queue & Downloads -->
-        <div class="mt-7 mb-2.5 flex flex-wrap items-center gap-2">
-          <div class="flex items-center gap-2">
-            <h2 class="text-base font-semibold text-fg">Queue</h2>
-            <span
-              id="queueCount"
-              class="text-xs text-muted font-mono bg-raised px-2 py-0.5 rounded-full border border-edge"
-            ></span>
+              <div id="profileTabs" class="border-edge bg-ink flex gap-[3px] rounded-lg border p-[3px]">
+                <button class="tab" data-profile="auto">Auto<small>Recommended</small></button>
+                <button class="tab" data-profile="best">Best<small>320k VBR</small></button>
+                <button class="tab" data-profile="balanced">Balanced<small>192k</small></button>
+                <button class="tab" data-profile="small">Compact<small>128k</small></button>
+                <button class="tab" data-profile="custom">Custom<small>Advanced</small></button>
+              </div>
+
+              <p id="autoHint" class="text-muted text-xs">
+                Automatically matches source quality. Clamped at minimum 128 kbps.
+              </p>
+
+              <div id="advanced" class="hidden flex-col gap-3 pt-2 border-t border-edge">
+                <div class="grid grid-cols-2 gap-2.5">
+                  <label class="field-label">
+                    Format
+                    <select id="format" class="field">
+                      <option value="mp3">MP3</option>
+                      <option value="m4a">M4A (AAC)</option>
+                      <option value="opus">Opus</option>
+                      <option value="ogg">OGG Vorbis</option>
+                    </select>
+                  </label>
+                  <label class="field-label">
+                    Bitrate (kbps)
+                    <input
+                      id="bitrate"
+                      type="number"
+                      min="128"
+                      max="320"
+                      step="8"
+                      value="192"
+                      class="field font-mono"
+                    />
+                  </label>
+                  <label class="field-label">
+                    Sample rate
+                    <select id="sampleRate" class="field font-mono">
+                      <option value="0">Original</option>
+                      <option value="48000">48 kHz</option>
+                      <option value="44100">44.1 kHz</option>
+                      <option value="32000">32 kHz</option>
+                    </select>
+                  </label>
+                  <label class="field-label">
+                    Channels
+                    <select id="channels" class="field">
+                      <option value="0">Original</option>
+                      <option value="2">Stereo</option>
+                      <option value="1">Mono</option>
+                    </select>
+                  </label>
+                </div>
+                <label class="check">
+                  <input type="checkbox" id="vbr" />
+                  <span>Variable Bitrate (VBR) — Better size/quality</span>
+                </label>
+              </div>
+
+              <label class="check border-t border-edge pt-2">
+                <input type="checkbox" id="hostToggle" />
+                <span>
+                  Public streaming link
+                  <span class="text-muted block text-[11px]">Expires in <span data-ttl>1 hour</span></span>
+                </span>
+              </label>
+            </section>
+
+            <!-- Clean, Friendly Notes Section -->
+            <section class="card p-4 flex flex-col gap-2.5" aria-label="Notes">
+              <h3 class="text-xs font-semibold text-fg uppercase tracking-wider">Notes</h3>
+              <ul class="text-xs text-muted/90 space-y-2">
+                <li class="flex items-start gap-2">
+                  <span class="text-accent mt-0.5">•</span>
+                  <span><strong class="text-fg font-medium">Studio tracks:</strong> Spotify and search queries match official studio releases, skipping video intros, visualizers, and pauses.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="text-accent mt-0.5">•</span>
+                  <span><strong class="text-fg font-medium">Audio fidelity:</strong> Enforces a minimum 128 kbps bitrate floor so audio never sounds distorted.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="text-accent mt-0.5">•</span>
+                  <span><strong class="text-fg font-medium">Auto-save:</strong> Download queue and history are preserved across refreshes.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="text-accent mt-0.5">•</span>
+                  <span id="limitsNote">Max 200 MB per file.</span>
+                </li>
+              </ul>
+            </section>
           </div>
-          <div class="flex-1"></div>
-          <button id="zipBtn" class="btn text-xs py-1.5 px-3" disabled>
-            <svg class="icon" viewBox="0 0 24 24">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-            </svg>
-            Download ZIP
-          </button>
-          <button id="clearBtn" class="btn text-xs py-1.5 px-3" disabled>
-            <svg class="icon" viewBox="0 0 24 24">
-              <path
-                d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
-              />
-            </svg>
-            Clear done
-          </button>
         </div>
-
-        <div id="batchBar" class="bar mb-3" hidden><i></i></div>
-        <div id="queueList" class="flex flex-col gap-2.5"></div>
-
-        <p
-          id="emptyState"
-          class="border-edge text-muted rounded-xl border border-dashed py-8 px-6 text-sm text-left flex flex-col gap-1 bg-panel/30"
-        >
-          <span class="font-medium text-fg">Nothing in queue right now.</span>
-          <span
-            >Use the search bar above to look up any track, or paste links from Spotify and
-            YouTube.</span
-          >
-        </p>
-
-        <!-- Information & Guidelines -->
-        <section id="notes" class="text-muted mt-10 text-[13px] border-t border-edge pt-6">
-          <h2 class="text-fg mb-2.5 text-sm font-semibold">Technical Highlights</h2>
-          <ul class="list-disc space-y-1.5 pl-5 text-xs text-muted/90">
-            <li>
-              <b class="text-fg">Studio Releases Only:</b> Spotify tracks are matched against
-              official YouTube Music label tracks (ATV), preventing video clips, intros, and
-              visualizers.
-            </li>
-            <li>
-              <b class="text-fg">Lossless Compression Floor:</b> Minimum bitrate is clamped at 128
-              kbps to prevent muddy audio artifacts.
-            </li>
-            <li>
-              <b class="text-fg">Session Preservation:</b> Completed downloads and audio history are
-              kept across server updates.
-            </li>
-            <li id="limitsNote"></li>
-          </ul>
-        </section>
       </div>
     </main>
 
-    <!-- Professional Footer with GitHub Button -->
-    <footer class="border-edge text-muted border-t py-6 text-xs bg-[#0c0d0f]">
-      <div
-        class="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 sm:px-6"
-      >
-        <div class="flex items-center gap-3">
-          <a
-            href="https://github.com/paragon506/samp-ytm"
-            target="_blank"
-            rel="noopener"
-            class="btn gap-2 text-xs py-1.5 px-3 bg-panel hover:bg-raised text-fg border-edge font-medium"
-          >
-            <svg class="size-4 fill-current shrink-0" viewBox="0 0 24 24">
-              <path
-                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"
-              />
-            </svg>
-            <span>View on GitHub</span>
-          </a>
-          <span class="text-muted/80">Developed by paragon506</span>
-        </div>
-        <div class="flex items-center gap-2 text-muted/60 font-mono text-[11px]">
-          <span>FFmpeg</span> • <span>yt-dlp</span> • <span>spotifyscraper</span>
-        </div>
+    <!-- Clean Centered Footer with GitHub Button & Credits -->
+    <footer class="border-edge text-muted border-t py-6 text-xs bg-panel/40">
+      <div class="mx-auto flex flex-col sm:flex-row items-center justify-center gap-3.5 px-4 text-center">
+        <a
+          href="https://github.com/paragon506/samp-ytm"
+          target="_blank"
+          rel="noopener"
+          class="btn gap-2 text-xs py-1.5 px-3.5 bg-panel hover:bg-raised text-fg border-edge font-medium shadow-sm transition-all"
+        >
+          <svg class="size-4 fill-current shrink-0" viewBox="0 0 24 24">
+            <path
+              d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"
+            />
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <span class="text-muted/80">Developed by paragon506</span>
       </div>
     </footer>
 
+    <!-- Toast message popup -->
     <div
       id="toast"
       role="status"
       class="border-edge-strong bg-raised pointer-events-none fixed bottom-6 left-1/2 max-w-[92vw] -translate-x-1/2 translate-y-5 rounded-lg border px-3.5 py-2 text-[13px] opacity-0 transition data-[show=true]:translate-y-0 data-[show=true]:opacity-100 z-50 shadow-xl"
     ></div>
 
+    <!-- Row Template for Queue Items -->
     <template id="rowTemplate">
       <article
-        class="card animate-enter px-4 py-3.5 border-edge/80 hover:border-edge transition-colors"
+        class="card animate-enter px-4 py-3 border-edge/80 hover:border-edge transition-colors"
       >
         <div class="flex items-center gap-3">
           <div class="min-w-0 flex-1">

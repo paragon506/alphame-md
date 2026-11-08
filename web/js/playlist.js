@@ -94,13 +94,11 @@ function renderTrackItem(track, getOptions, onQueued) {
 
   const btn = item.querySelector('.dl-btn');
 
-  // Mark as already downloaded if in history
+  // Mark if previously downloaded, but keep button active
   if (wasDownloaded(track)) {
-    btn.disabled = true;
     btn.innerHTML = icon('check');
     btn.classList.add('text-accent');
-    btn.title = 'Already downloaded';
-    item.classList.add('opacity-60');
+    btn.title = 'Downloaded previously (click to download again)';
   }
 
   btn.addEventListener('click', async () => {

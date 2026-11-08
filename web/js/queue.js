@@ -267,7 +267,21 @@ export function renderQueue(jobs, refresh) {
   $('#emptyState').hidden = jobs.length > 0;
   $('#zipBtn').disabled = done === 0;
   $('#clearBtn').disabled = !jobs.some((job) => !isActive(job));
-  $('#queueCount').textContent = jobs.length ? `${done}/${jobs.length} done` : '';
+
+  const countEl = $('#queueCount');
+  if (countEl) {
+    if (jobs.length > 0) {
+      countEl.textContent = `${done}/${jobs.length} done`;
+      countEl.className =
+        'text-xs text-accent font-mono bg-accent/10 px-2.5 py-0.5 rounded-full border border-accent/20';
+      countEl.hidden = false;
+    } else {
+      countEl.textContent = '';
+      countEl.className = 'hidden';
+      countEl.hidden = true;
+    }
+  }
+
   $('#batchBar').hidden = active.length === 0;
   if (active.length)
     $('#batchBar').firstElementChild.style.width = `${Math.round(progress / jobs.length)}%`;

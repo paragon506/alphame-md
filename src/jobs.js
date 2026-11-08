@@ -128,8 +128,9 @@ async function settleTags(job) {
   const fixes = {};
   const artist = cleanArtist(tags.artist || job.artist);
   if (artist !== tags.artist) fixes.artist = artist;
-  if (!tags.title && job.source?.type === 'yt' && job.title) fixes.title = job.title;
-  if (job.source?.type === 'spotify') {
+  if (!tags.title && ['yt', 'youtube'].includes(job.source?.type) && job.title)
+    fixes.title = job.title;
+  if (job.source?.type === 'spotify' || job.source?.type === 'youtube') {
     if (job.title && job.title !== tags.title) fixes.title = job.title;
     if (job.artist && job.artist !== tags.artist) fixes.artist = job.artist;
     if (job.album && job.album !== tags.album) fixes.album = job.album;
@@ -158,9 +159,12 @@ export async function runJob(job) {
       job.status = 'downloading';
       job.progress = 0;
       const dest = path.join(WORK, `${job.id}.src`);
-      if (job.source.type === 'yt' || job.source.type === 'spotify') {
+      const isYt = ['yt', 'youtube', 'ytmusic'].includes(job.source?.type);
+      const isSpotify = job.source?.type === 'spotify';
+
+      if (isYt || isSpotify) {
         let downloadTarget = job.source.url;
-        if (job.source.type === 'spotify') {
+        if (isSpotify) {
           // Resolve to official studio audio track on YouTube Music (avoids video clips/visualizers)
           const officialUrl = await resolveOfficialTrack(
             job.title,
