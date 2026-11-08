@@ -21,49 +21,46 @@
     <header class="border-b border-edge/50 bg-panel/70 backdrop-blur-md sticky top-0 z-30">
       <div class="mx-auto flex h-13 w-full items-center justify-between gap-4 px-4 sm:px-6 lg:px-10 xl:px-14 max-w-[1720px]">
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
           <!-- logo icon only -->
           <button
-            class="flex items-center cursor-pointer select-none group outline-none"
+            class="flex items-center justify-center size-8 rounded-lg bg-raised border border-edge/80 hover:border-accent/40 text-accent transition-colors cursor-pointer select-none outline-none"
             onclick="window.scrollTo({top:0,behavior:'smooth'})"
-            aria-label="Back to top"
+            title="AlphaMe"
+            aria-label="AlphaMe"
           >
-            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-6 shrink-0">
-              <rect width="28" height="28" rx="8" fill="#0f1115"/>
-              <path d="M4 14h2.5M9 10v8M14 6.5v15M18.5 10v8M23 12.5v3" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
+            <svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <path d="M3 12h2M7 8v8M11 4v16M15 7v10M19 10v4M22 12h-1"/>
             </svg>
           </button>
-
-          <span class="text-edge-strong/60 select-none">|</span>
 
           <!-- github + credits in header -->
           <a
             href="https://github.com/paragon506/samp-ytm"
             target="_blank"
             rel="noopener"
-            class="flex items-center gap-1.5 text-muted hover:text-fg transition-colors"
-            style="font-size:12px"
+            class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs text-muted hover:text-fg hover:bg-raised transition-all border border-transparent hover:border-edge"
           >
             <svg class="size-3.5 fill-current shrink-0" viewBox="0 0 24 24">
               <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/>
             </svg>
-            GitHub
+            <span class="font-medium">GitHub</span>
+            <span class="text-muted/60 text-[11px] font-normal">by paragon506</span>
           </a>
-          <span class="text-muted/50" style="font-size:12px">by paragon506</span>
         </div>
 
-        <!-- settings button (improved) -->
+        <!-- settings button -->
         <button
           id="settingsToggle"
-          class="btn btn-ghost flex items-center gap-2 px-3"
+          class="flex items-center justify-center size-8 rounded-lg bg-raised/60 hover:bg-raised text-muted hover:text-fg border border-edge/80 hover:border-edge-strong transition-all cursor-pointer"
+          title="Settings"
           aria-label="Settings"
           aria-expanded="false"
         >
-          <svg class="icon" viewBox="0 0 24 24">
-            <path d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.8l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7V20a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.8v-.5a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2z"/>
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
-          <span class="text-muted" style="font-size:12px">Settings</span>
         </button>
       </div>
     </header>
@@ -309,7 +306,7 @@
                 <div class="flex items-center gap-2.5">
                   <h2 class="font-semibold text-fg text-sm">Downloads</h2>
                   <span id="queueCount" class="hidden"></span>
-                  <!-- server status (moved here) -->
+                  <!-- server status-->
                   <div
                     id="statusChip"
                     class="flex items-center gap-1.5 border border-edge/60 bg-raised/40 px-2 py-0.5 rounded-full"

@@ -265,10 +265,11 @@ export const pub = (j) => ({
   duration: j.duration,
   origSize: j.origSize,
   newSize: j.newSize,
-  format: j.opts.format,
+  format: j.opts?.format || 'mp3',
   note: j.note,
   error: j.error,
   hosted: j.hosted,
+  hasAudio: Boolean(j.status === 'done' && j.out && fs.existsSync(j.out)),
   srcInfo: j.srcInfo || '',
   expiresAt: (j.finished || j.created) + TTL_MS,
 });

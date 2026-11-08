@@ -39,6 +39,17 @@ export function clearQueueStorage() {
   localStorage.removeItem(STORAGE_JOBS_KEY);
 }
 
+export function clearDoneRows() {
+  clearQueueStorage();
+  for (const [id, r] of [...rows.entries()]) {
+    if (!isActive(r.job)) {
+      r.element.remove();
+      rows.delete(id);
+    }
+  }
+  updateQueueDisplay();
+}
+
 export function removeCachedJob(id) {
   try {
     const list = loadCachedJobs().filter((j) => j.id !== id);
@@ -166,17 +177,18 @@ function actionsFor(row, job, refresh) {
     items.push({
       icon: 'trash',
       label: 'Remove',
+      danger: true,
       run: async () => {
-        if (job.fromCache) {
-          removeCachedJob(job.id);
-          refresh();
-        } else {
-          try {
-            await request(`/api/jobs/${job.id}`, { method: 'DELETE' });
-          } catch {}
-          removeCachedJob(job.id);
-          refresh();
+        const r = rows.get(job.id);
+        if (r) {
+          r.element.remove();
+          rows.delete(job.id);
         }
+        removeCachedJob(job.id);
+        updateQueueDisplay();
+        try {
+          await request(`/api/jobs/${job.id}`, { method: 'DELETE' });
+        } catch {}
       },
     });
   }
@@ -185,7 +197,7 @@ function actionsFor(row, job, refresh) {
 
 function buildAction(item) {
   const control = document.createElement(item.href ? 'a' : 'button');
-  control.className = 'btn btn-icon';
+  control.className = `btn btn-icon ${item.danger ? 'hover:text-danger hover:border-danger/40' : ''}`;
   control.title = item.label;
   control.setAttribute('aria-label', item.label);
   control.innerHTML = icon(item.icon);
@@ -202,12 +214,16 @@ function updateResult(row, job) {
   const savedPercent = job.origSize ? Math.round((1 - job.newSize / job.origSize) * 100) : 0;
   row.sizes.textContent = `${formatBytes(job.origSize)} → ${formatBytes(job.newSize)}`;
   row.saved.textContent = `${savedPercent > 0 ? `−${savedPercent}` : 0}% saved`;
-  const meta = [job.format.toUpperCase(), job.note];
+  const meta = [job.format ? job.format.toUpperCase() : 'MP3', job.note];
   if (job.hosted) meta.push(`public link · expires in ${minutesLeft(job.expiresAt)} min`);
   row.meta.textContent = meta.filter(Boolean).join(' · ');
 
-  if (job.fromCache) {
-    if (row.player) row.player.style.display = 'none';
+  const canPlay = !job.fromCache && job.hasAudio !== false;
+  if (!canPlay) {
+    if (row.player) {
+      row.player.removeAttribute('src');
+      row.player.style.display = 'none';
+    }
     if (row.expired) show(row.expired, true, 'flex');
   } else {
     if (row.expired) show(row.expired, false, 'flex');
@@ -215,10 +231,16 @@ function updateResult(row, job) {
       row.player.style.display = '';
       if (!row.playerReady) {
         row.player.src = withClient(`/api/jobs/${job.id}/audio?t=${job.finished || Date.now()}`);
-        row.player.onerror = () => {
+        row.player.addEventListener('error', () => {
           row.player.style.display = 'none';
           if (row.expired) show(row.expired, true, 'flex');
-        };
+        });
+        row.player.addEventListener('play', () => {
+          if (row.player.error) {
+            row.player.style.display = 'none';
+            if (row.expired) show(row.expired, true, 'flex');
+          }
+        });
         row.playerReady = true;
       }
     }
@@ -263,7 +285,7 @@ function updateRow(row, job, refresh) {
   row.error.textContent = job.error;
   show(row.error, Boolean(job.error));
 
-  const actionsKey = `${job.status}:${job.hosted}`;
+  const actionsKey = `${job.status}:${job.hosted}:${job.fromCache}`;
   if (row.actionsKey !== actionsKey) {
     row.actionsKey = actionsKey;
     row.actions.replaceChildren(...actionsFor(row, job, refresh).map(buildAction));
@@ -271,6 +293,39 @@ function updateRow(row, job, refresh) {
 
   show(row.result, job.status === 'done', 'flex');
   if (job.status === 'done') updateResult(row, job);
+}
+
+export function updateQueueDisplay() {
+  const currentJobs = [...rows.values()].map((r) => r.job).filter(Boolean);
+  const done = currentJobs.filter((job) => job.status === 'done').length;
+  const doneFromServer = currentJobs.filter((job) => job.status === 'done' && !job.fromCache).length;
+  const active = currentJobs.filter(isActive);
+  const progress = currentJobs.reduce(
+    (sum, job) => sum + (SETTLED.has(job.status) ? 100 : job.progress || 0),
+    0,
+  );
+
+  $('#emptyState').hidden = currentJobs.length > 0;
+  $('#zipBtn').disabled = doneFromServer === 0;
+  $('#clearBtn').disabled = currentJobs.length === 0;
+
+  const countEl = $('#queueCount');
+  if (countEl) {
+    if (currentJobs.length > 0) {
+      countEl.textContent = `${done}/${currentJobs.length} done`;
+      countEl.className =
+        'text-xs text-accent font-mono bg-accent/10 px-2.5 py-0.5 rounded-full border border-accent/20';
+      countEl.hidden = false;
+    } else {
+      countEl.textContent = '';
+      countEl.className = 'hidden';
+      countEl.hidden = true;
+    }
+  }
+
+  $('#batchBar').hidden = active.length === 0;
+  if (active.length)
+    $('#batchBar').firstElementChild.style.width = `${Math.round(progress / currentJobs.length)}%`;
 }
 
 export function renderQueue(jobs, refresh) {
@@ -303,35 +358,7 @@ export function renderQueue(jobs, refresh) {
     rows.delete(id);
   }
 
-  const done = jobs.filter((job) => job.status === 'done').length;
-  const doneFromServer = jobs.filter((job) => job.status === 'done' && !job.fromCache).length;
+  updateQueueDisplay();
   const active = jobs.filter(isActive);
-  const progress = jobs.reduce(
-    (sum, job) => sum + (SETTLED.has(job.status) ? 100 : job.progress || 0),
-    0,
-  );
-
-  $('#emptyState').hidden = jobs.length > 0;
-  $('#zipBtn').disabled = doneFromServer === 0;
-  $('#clearBtn').disabled = jobs.length === 0;
-
-  const countEl = $('#queueCount');
-  if (countEl) {
-    if (jobs.length > 0) {
-      countEl.textContent = `${done}/${jobs.length} done`;
-      countEl.className =
-        'text-xs text-accent font-mono bg-accent/10 px-2.5 py-0.5 rounded-full border border-accent/20';
-      countEl.hidden = false;
-    } else {
-      countEl.textContent = '';
-      countEl.className = 'hidden';
-      countEl.hidden = true;
-    }
-  }
-
-  $('#batchBar').hidden = active.length === 0;
-  if (active.length)
-    $('#batchBar').firstElementChild.style.width = `${Math.round(progress / jobs.length)}%`;
-
   return active.length > 0;
 }

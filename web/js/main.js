@@ -2,7 +2,7 @@ import { $ } from './dom.js';
 import { request, fetchPublic, uploadFiles, withClient } from './api.js';
 import { formatTtl } from './format.js';
 import { getOptions, initOptions } from './options.js';
-import { renderQueue, clearQueueStorage } from './queue.js';
+import { renderQueue, clearQueueStorage, clearDoneRows } from './queue.js';
 import { notify } from './toast.js';
 import { initBrowser } from './browser.js';
 import {
@@ -172,9 +172,12 @@ $('#importBtn').addEventListener('click', handleImport);
 $('#zipBtn').addEventListener('click', () => {
   location.href = withClient('/api/zip');
 });
-$('#clearBtn').addEventListener('click', () => {
-  clearQueueStorage();
-  request('/api/clear', { method: 'POST' }).catch(() => {}).then(poll);
+$('#clearBtn').addEventListener('click', async () => {
+  clearDoneRows();
+  try {
+    await request('/api/clear', { method: 'POST' });
+  } catch {}
+  poll();
 });
 
 const autoClearSetting = $('#settingAutoClear');

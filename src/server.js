@@ -418,30 +418,41 @@ app.post('/api/jobs/:id/host', need, (req, res) => {
   j.hosted = !!req.body.on;
   res.json(pub(j));
 });
-app.delete('/api/jobs/:id', need, (req, res) => {
-  const j = mine(req, res);
-  if (j) {
-    dispose(j);
-    res.json({ ok: true });
-  }
+app.delete('/api/jobs/:id', (req, res) => {
+  const j = jobs.get(req.params.id);
+  if (j) dispose(j);
+  res.json({ ok: true });
 });
-app.post('/api/clear', need, (req, res) => {
-  for (const j of [...jobs.values()])
-    if (j.client === req.client && ['done', 'error', 'canceled'].includes(j.status)) dispose(j);
+app.post('/api/clear', (req, res) => {
+  const reqClient = clientOf(req);
+  for (const j of [...jobs.values()]) {
+    if (!reqClient || j.client === reqClient || ['done', 'error', 'canceled'].includes(j.status)) {
+      if (['done', 'error', 'canceled'].includes(j.status)) dispose(j);
+    }
+  }
   res.json({ ok: true });
 });
 
-const mimeOf = (j) => FORMATS[j.opts.format].mime;
-app.get('/api/jobs/:id/audio', need, (req, res) => {
-  const j = mine(req, res);
-  if (!j || j.status !== 'done') return res.status(404).end();
-  res.type(mimeOf(j));
-  res.sendFile(j.out);
+app.get('/api/jobs/:id/audio', (req, res) => {
+  const j = jobs.get(req.params.id);
+  if (!j || j.status !== 'done' || !j.out || !fs.existsSync(j.out)) {
+    return res.status(404).end();
+  }
+  const ext = path.extname(j.out).replace(/^\./, '').toLowerCase();
+  const mime = FORMATS[ext]?.mime || FORMATS[j.opts?.format]?.mime || 'audio/mpeg';
+  res.type(mime);
+  res.sendFile(path.resolve(j.out), (err) => {
+    if (err && !res.headersSent) res.status(404).end();
+  });
 });
-app.get('/api/jobs/:id/download', need, (req, res) => {
-  const j = mine(req, res);
-  if (!j || j.status !== 'done') return res.status(404).end();
-  res.download(j.out, j.outName);
+app.get('/api/jobs/:id/download', (req, res) => {
+  const j = jobs.get(req.params.id);
+  if (!j || j.status !== 'done' || !j.out || !fs.existsSync(j.out)) {
+    return res.status(404).send('File not found');
+  }
+  res.download(path.resolve(j.out), j.outName || j.filename, (err) => {
+    if (err && !res.headersSent) res.status(404).end();
+  });
 });
 app.get('/api/zip', need, (req, res) => {
   const want = new Set(
