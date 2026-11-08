@@ -39,6 +39,13 @@ export function clearQueueStorage() {
   localStorage.removeItem(STORAGE_JOBS_KEY);
 }
 
+export function removeCachedJob(id) {
+  try {
+    const list = loadCachedJobs().filter((j) => j.id !== id);
+    localStorage.setItem(STORAGE_JOBS_KEY, JSON.stringify(list));
+  } catch {}
+}
+
 export const isActive = (job) => ACTIVE.has(job.status);
 
 function createRow() {
@@ -57,6 +64,7 @@ function createRow() {
     saved: part('saved'),
     meta: part('meta'),
     player: part('player'),
+    expired: part('expired'),
     editor: part('editor'),
     error: part('error'),
     job: null,
@@ -158,7 +166,18 @@ function actionsFor(row, job, refresh) {
     items.push({
       icon: 'trash',
       label: 'Remove',
-      run: () => request(`/api/jobs/${job.id}`, { method: 'DELETE' }).then(refresh),
+      run: async () => {
+        if (job.fromCache) {
+          removeCachedJob(job.id);
+          refresh();
+        } else {
+          try {
+            await request(`/api/jobs/${job.id}`, { method: 'DELETE' });
+          } catch {}
+          removeCachedJob(job.id);
+          refresh();
+        }
+      },
     });
   }
   return items;
@@ -186,9 +205,23 @@ function updateResult(row, job) {
   const meta = [job.format.toUpperCase(), job.note];
   if (job.hosted) meta.push(`public link · expires in ${minutesLeft(job.expiresAt)} min`);
   row.meta.textContent = meta.filter(Boolean).join(' · ');
-  if (!row.playerReady) {
-    row.player.src = withClient(`/api/jobs/${job.id}/audio?t=${job.finished || Date.now()}`);
-    row.playerReady = true;
+
+  if (job.fromCache) {
+    if (row.player) row.player.style.display = 'none';
+    if (row.expired) show(row.expired, true, 'flex');
+  } else {
+    if (row.expired) show(row.expired, false, 'flex');
+    if (row.player) {
+      row.player.style.display = '';
+      if (!row.playerReady) {
+        row.player.src = withClient(`/api/jobs/${job.id}/audio?t=${job.finished || Date.now()}`);
+        row.player.onerror = () => {
+          row.player.style.display = 'none';
+          if (row.expired) show(row.expired, true, 'flex');
+        };
+        row.playerReady = true;
+      }
+    }
   }
 }
 
@@ -246,7 +279,7 @@ export function renderQueue(jobs, refresh) {
     saveCachedJobs(jobs);
   } else {
     const cached = loadCachedJobs();
-    if (cached.length > 0) jobs = cached;
+    if (cached.length > 0) jobs = cached.map((j) => ({ ...j, fromCache: true }));
   }
 
   const list = $('#queueList');
@@ -271,6 +304,7 @@ export function renderQueue(jobs, refresh) {
   }
 
   const done = jobs.filter((job) => job.status === 'done').length;
+  const doneFromServer = jobs.filter((job) => job.status === 'done' && !job.fromCache).length;
   const active = jobs.filter(isActive);
   const progress = jobs.reduce(
     (sum, job) => sum + (SETTLED.has(job.status) ? 100 : job.progress || 0),
@@ -278,8 +312,8 @@ export function renderQueue(jobs, refresh) {
   );
 
   $('#emptyState').hidden = jobs.length > 0;
-  $('#zipBtn').disabled = done === 0;
-  $('#clearBtn').disabled = !jobs.some((job) => !isActive(job));
+  $('#zipBtn').disabled = doneFromServer === 0;
+  $('#clearBtn').disabled = jobs.length === 0;
 
   const countEl = $('#queueCount');
   if (countEl) {

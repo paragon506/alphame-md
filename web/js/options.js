@@ -32,12 +32,23 @@ export function getOptions() {
 export function initOptions() {
   const defaultProfile = $('#defaultProfile');
   const defaultHost = $('#defaultHost');
+  const defaultFormat = $('#defaultFormat');
   const panel = $('#settingsPanel');
   const toggle = $('#settingsToggle');
 
   defaultProfile.value = profile === 'custom' ? DEFAULT_PROFILE : profile;
   defaultHost.checked = localStorage.getItem(STORAGE.host) === '1';
   $('#hostToggle').checked = defaultHost.checked;
+
+  if (defaultFormat) {
+    const savedFormat = localStorage.getItem('alphame-format') || 'mp3';
+    defaultFormat.value = savedFormat;
+    $('#format').value = savedFormat;
+    defaultFormat.addEventListener('change', () => {
+      localStorage.setItem('alphame-format', defaultFormat.value);
+      $('#format').value = defaultFormat.value;
+    });
+  }
 
   toggle.addEventListener('click', () => {
     const open = panel.classList.contains('hidden');

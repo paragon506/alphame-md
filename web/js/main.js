@@ -132,7 +132,7 @@ async function refreshStatus() {
     } else if (health.jobs > 0) {
       $('#statusText').textContent = `${health.jobs} in queue`;
     } else {
-      $('#statusText').textContent = 'Online';
+      $('#statusText').textContent = 'Working';
     }
     document.querySelectorAll('[data-ttl]').forEach((element) => {
       element.textContent = formatTtl(info.ttlMinutes);
@@ -174,7 +174,25 @@ $('#zipBtn').addEventListener('click', () => {
 });
 $('#clearBtn').addEventListener('click', () => {
   clearQueueStorage();
-  request('/api/clear', { method: 'POST' }).then(poll);
+  request('/api/clear', { method: 'POST' }).catch(() => {}).then(poll);
+});
+
+const autoClearSetting = $('#settingAutoClear');
+if (autoClearSetting) {
+  autoClearSetting.checked = localStorage.getItem('alphame_autoclear') === 'true';
+  autoClearSetting.addEventListener('change', () => {
+    localStorage.setItem('alphame_autoclear', String(autoClearSetting.checked));
+  });
+  if (autoClearSetting.checked) {
+    clearQueueStorage();
+  }
+}
+
+$('#clearHistoryBtn')?.addEventListener('click', () => {
+  clearQueueStorage();
+  clearHistory();
+  notify('History cleared');
+  poll();
 });
 refreshStatus();
 setInterval(refreshStatus, HEALTH_MS);
