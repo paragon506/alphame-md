@@ -185,7 +185,8 @@ app.post(
     // Batch tracks download (e.g. from playlist "Download All")
     if (Array.isArray(req.body.tracks) && req.body.tracks.length) {
       const created = [];
-      for (const rawTrack of req.body.tracks.slice(0, MAX_PLAYLIST * 2)) {
+      const batchList = MAX_PLAYLIST > 0 ? req.body.tracks.slice(0, MAX_PLAYLIST) : req.body.tracks;
+      for (const rawTrack of batchList) {
         const t = normalizeTrack(rawTrack);
         const query = t.query || `${t.title} ${t.artist}`.trim();
         const fname = safeName(t.artist ? `${t.artist} - ${t.title}` : t.title);
@@ -260,7 +261,8 @@ app.post(
       }
     }
     const created = [];
-    for (const it of items.slice(0, MAX_PLAYLIST * 2)) {
+    const importList = MAX_PLAYLIST > 0 ? items.slice(0, MAX_PLAYLIST) : items;
+    for (const it of importList) {
       let name = 'audio';
       try {
         name = decodeURIComponent(path.basename(new URL(it.url).pathname)) || 'audio';

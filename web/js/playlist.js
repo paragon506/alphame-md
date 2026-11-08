@@ -28,11 +28,13 @@ export function isPlaylistLink(text) {
 
 let currentPlaylist = null;
 let currentOnDownloadCallback = null;
+let renderedTrackElements = [];
 
 function renderTrackItem(track, getOptions, onQueued) {
   const item = document.createElement('div');
   item.className =
     'flex items-center gap-3 p-2 rounded-lg hover:bg-raised/50 transition-colors group';
+  item.dataset.query = `${track.title} ${track.artist}`.toLowerCase();
 
   const coverUrl = track.cover || '';
   const imgHtml = coverUrl
@@ -76,19 +78,29 @@ function renderTrackItem(track, getOptions, onQueued) {
 
 export function initPlaylistUI({ getOptions, onQueued }) {
   const section = $('#playlistSection');
-  const coverEl = $('#playlistCover');
-  const titleEl = $('#playlistTitle');
-  const badgeEl = $('#playlistBadge');
-  const countEl = $('#playlistCount');
-  const descEl = $('#playlistDesc');
   const tracksListEl = $('#playlistTracks');
   const downloadAllBtn = $('#playlistDownloadAll');
   const closeBtn = $('#playlistClose');
+  const searchInput = $('#playlistSearch');
+  const searchCountEl = $('#playlistSearchCount');
 
   currentOnDownloadCallback = onQueued;
 
   closeBtn?.addEventListener('click', () => {
     hidePlaylist();
+  });
+
+  searchInput?.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    let visibleCount = 0;
+    for (const el of renderedTrackElements) {
+      const match = !q || el.dataset.query.includes(q);
+      el.style.display = match ? 'flex' : 'none';
+      if (match) visibleCount++;
+    }
+    if (searchCountEl) {
+      searchCountEl.textContent = q ? `${visibleCount} of ${renderedTrackElements.length}` : '';
+    }
   });
 
   downloadAllBtn?.addEventListener('click', async () => {
@@ -122,6 +134,7 @@ export function hidePlaylist() {
   const section = $('#playlistSection');
   if (section) show(section, false, 'flex');
   currentPlaylist = null;
+  renderedTrackElements = [];
 }
 
 export function displayPlaylist(playlist, getOptions) {
@@ -136,9 +149,14 @@ export function displayPlaylist(playlist, getOptions) {
   const descEl = $('#playlistDesc');
   const tracksListEl = $('#playlistTracks');
   const downloadAllBtn = $('#playlistDownloadAll');
+  const searchInput = $('#playlistSearch');
+  const searchCountEl = $('#playlistSearchCount');
+
+  if (searchInput) searchInput.value = '';
+  if (searchCountEl) searchCountEl.textContent = '';
 
   titleEl.textContent = playlist.title || 'Playlist';
-  countEl.textContent = `${playlist.tracks.length} track${playlist.tracks.length === 1 ? '' : 's'}`;
+  countEl.textContent = `${playlist.tracks.length.toLocaleString()} tracks`;
 
   if (playlist.description) {
     descEl.textContent = playlist.description;
@@ -170,12 +188,18 @@ export function displayPlaylist(playlist, getOptions) {
   downloadAllBtn.disabled = false;
   downloadAllBtn.innerHTML = `${icon('download')} Download all`;
 
-  // Render tracks
+  // Render tracks with DocumentFragment for performance with 1,000+ tracks
   tracksListEl.replaceChildren();
+  renderedTrackElements = [];
+  const fragment = document.createDocumentFragment();
+
   playlist.tracks.forEach((track) => {
     const row = renderTrackItem(track, getOptions, currentOnDownloadCallback);
-    tracksListEl.appendChild(row);
+    renderedTrackElements.push(row);
+    fragment.appendChild(row);
   });
+
+  tracksListEl.appendChild(fragment);
 
   show(section, true, 'flex');
   section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

@@ -46,7 +46,7 @@ export function fetchSpotifyPlaylist(url, options = {}) {
       return resolve(cached.data);
     }
 
-    const maxTracks = options.maxTracks || MAX_PLAYLIST;
+    const maxTracks = options.maxTracks !== undefined ? options.maxTracks : MAX_PLAYLIST || 0;
     const delaySec = (options.delayMs ?? SPOTIFY_DELAY_MS) / 1000;
 
     const args = [
@@ -61,7 +61,7 @@ export function fetchSpotifyPlaylist(url, options = {}) {
     execFile(
       PYTHON,
       args,
-      { timeout: 60_000, maxBuffer: 16 * 1024 * 1024 },
+      { timeout: 180_000, maxBuffer: 64 * 1024 * 1024 },
       (err, stdout, stderr) => {
         let data;
         try {

@@ -59,13 +59,13 @@ def select_best_image(images) -> str:
     return images[0].url if hasattr(images[0], "url") else str(images[0])
 
 
-def fetch_playlist(playlist_id: str, max_tracks: int = 100, delay: float = 0.4) -> dict:
+def fetch_playlist(playlist_id: str, max_tracks: int | None = None, delay: float = 0.2) -> dict:
     """Fetch Spotify playlist tracks using spotifyscraper."""
     if delay > 0:
         time.sleep(delay)
 
     client = SpotifyClient(
-        rate_limit=RateLimit(per_second=1.5, burst=2),
+        rate_limit=RateLimit(per_second=2.0, burst=4),
         retry=RetryPolicy(max_attempts=3, backoff_base=1.0)
     )
 
@@ -155,7 +155,7 @@ def fetch_playlist(playlist_id: str, max_tracks: int = 100, delay: float = 0.4) 
 def main():
     parser = argparse.ArgumentParser(description="Fetch Spotify playlist tracks.")
     parser.add_argument("url", help="Spotify playlist URL, URI, or ID")
-    parser.add_argument("--max-tracks", type=int, default=100, help="Maximum number of tracks")
+    parser.add_argument("--max-tracks", type=int, default=0, help="Maximum number of tracks (0 or omit for all tracks)")
     parser.add_argument("--delay", type=float, default=0.2, help="Inter-call delay in seconds")
 
     args = parser.parse_args()
@@ -169,7 +169,8 @@ def main():
         }))
         sys.exit(1)
 
-    result = fetch_playlist(pid, max_tracks=args.max_tracks, delay=args.delay)
+    max_tracks_param = None if (args.max_tracks is None or args.max_tracks <= 0) else args.max_tracks
+    result = fetch_playlist(pid, max_tracks=max_tracks_param, delay=args.delay)
     sys.stdout.write(json.dumps(result))
 
     if not result.get("success"):

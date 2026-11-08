@@ -21,8 +21,8 @@ export const WORK = path.resolve(
 export const TTL_MS = +env('TTL_MINUTES', 60) * 60_000;
 export const MAX_BYTES = +env('MAX_FILE_MB', 200) * 1024 * 1024;
 export const CONCURRENCY = Math.max(1, +env('CONCURRENCY', 2));
-export const MAX_JOBS = +env('MAX_JOBS', 300);
-export const MAX_PLAYLIST = +env('MAX_PLAYLIST_ITEMS', 100);
+export const MAX_JOBS = +env('MAX_JOBS', 10000);
+export const MAX_PLAYLIST = +env('MAX_PLAYLIST_ITEMS', 0);
 export const YTDLP = env('YTDLP_PATH', 'yt-dlp');
 export const PYTHON = env('PYTHON_PATH', process.platform === 'win32' ? 'python' : 'python3');
 export const SPOTIFY_DELAY_MS = +env('SPOTIFY_DELAY_MS', 400);

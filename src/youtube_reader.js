@@ -1,5 +1,6 @@
 import { execFile } from 'node:child_process';
 import { MAX_PLAYLIST, YTDLP } from './config.js';
+import { getYtDlpCommonArgs } from './sources.js';
 
 export const YOUTUBE_PLAYLIST_REGEX =
   /(?:(?:music\.)?youtube\.com\/(?:playlist\?|watch\?.*?)list=([a-zA-Z0-9_-]+)|youtu\.be\/.*[?&]list=([a-zA-Z0-9_-]+))/i;
@@ -30,17 +31,14 @@ export function extractYouTubePlaylistId(url) {
 
 export function fetchYouTubePlaylist(url, options = {}) {
   return new Promise((resolve, reject) => {
-    const maxTracks = options.maxTracks || MAX_PLAYLIST;
-    const args = [
-      '--flat-playlist',
-      '-J',
-      '--no-warnings',
-      '--playlist-end',
-      String(maxTracks),
-      url.trim(),
-    ];
+    const maxTracks = options.maxTracks !== undefined ? options.maxTracks : MAX_PLAYLIST;
+    const args = ['--flat-playlist', '-J', ...getYtDlpCommonArgs()];
+    if (maxTracks > 0) {
+      args.push('--playlist-end', String(maxTracks));
+    }
+    args.push(url.trim());
 
-    execFile(YTDLP, args, { maxBuffer: 64e6, timeout: 120_000 }, (err, out) => {
+    execFile(YTDLP, args, { maxBuffer: 64e6, timeout: 180_000 }, (err, out) => {
       if (err) {
         return reject(
           new Error(
