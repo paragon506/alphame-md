@@ -5,6 +5,7 @@ import { now, id, rm, sizeOf, safeName, stripExt } from './utils.js';
 import { probe, encode } from './media.js';
 import { emptyTags, readTags, cleanArtist, sanitizeTags, rewriteTags } from './tags.js';
 import { downloadDirect, ytDownload } from './sources.js';
+import { resolveOfficialTrack } from './ytmusic_resolver.js';
 
 export const jobs = new Map();
 const queue = [];
@@ -100,12 +101,21 @@ export async function runJob(job) {
       job.progress = 0;
       const dest = path.join(WORK, `${job.id}.src`);
       if (job.source.type === 'yt' || job.source.type === 'spotify') {
-        const downloadTarget =
-          job.source.type === 'spotify'
-            ? job.source.url?.startsWith('ytsearch')
-              ? job.source.url
-              : `ytsearch1:${job.source.query || `${job.title} ${job.artist}`.trim()}`
-            : job.source.url;
+        let downloadTarget = job.source.url;
+        if (job.source.type === 'spotify') {
+          // Resolve to official studio audio track on YouTube Music (avoids video clips/visualizers)
+          const officialUrl = await resolveOfficialTrack(
+            job.title,
+            job.artist,
+            job.duration || job.source.duration || 0,
+          );
+          if (officialUrl) {
+            downloadTarget = officialUrl;
+          } else if (!downloadTarget || !downloadTarget.startsWith('http')) {
+            const q = job.source.query || `${job.title} ${job.artist}`.trim();
+            downloadTarget = `ytsearch1:${q} Audio`;
+          }
+        }
         job.src = await ytDownload(job, downloadTarget, dest);
       } else {
         await downloadDirect(job, job.source.url, dest);
